@@ -59,17 +59,6 @@ A complete, 3NF relational database management project
 10. **Bilingual Support (English &amp; Telugu &middot; తెలుగు)**:
     - One-click toggle between English and Telugu across all pages.
 
----
-
-## 🚀 How to Host on Netlify (1-Click Deployment)
-
-1. Go to [netlify.com](https://www.netlify.com/) and log in.
-2. Drag and drop the `salonflow/` folder directly into the Netlify deploy box.
-3. Your application is live instantly with HTTPS!
-4. Both `index.html` and `saloonflow.html` run self-contained with no server dependencies needed.
-
----
-
 ## 📁 File Structure
 
 ```
