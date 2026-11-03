@@ -1,12 +1,6 @@
 # SalonFlow &middot; DBMS Mini Project & Live Production System
 
-A complete, 3NF relational database management project and real-time salon queue management system for **Visakhapatnam (Vizag), Andhra Pradesh**.
-
----
-
-## 🏛️ Is This a Real DBMS Project? Will Faculty Accept It?
-
-**YES, 100% YES.** This project is engineered specifically to meet and exceed all university and college DBMS requirements:
+A complete, 3NF relational database management project 
 
 1. **Third Normal Form (3NF) Relational Architecture**:
    - Explicit Primary Keys, Foreign Keys (`ON DELETE CASCADE`), Unique Constraints, and Indexing.
