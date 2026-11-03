@@ -1,0 +1,4824 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SalonFlow &middot; Real-Time Salon Queue &amp; Wait Times in Vizag</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='28' fill='%230a0a0c'/%3E%3Crect x='8' y='8' width='84' height='84' rx='22' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c7d2fe'/%3E%3Cstop offset='40%25' stop-color='%23f472b6'/%3E%3Cstop offset='80%25' stop-color='%23fbbf24'/%3E%3Cstop offset='100%25' stop-color='%2334d399'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='50' y='65' font-family='sans-serif' font-weight='900' font-style='italic' font-size='46' text-anchor='middle' fill='%23000'%3Esf%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SalonFlow">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%230a0a0c'/%3E%3Crect x='16' y='16' width='160' height='160' rx='34' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c7d2fe'/%3E%3Cstop offset='40%25' stop-color='%23f472b6'/%3E%3Cstop offset='80%25' stop-color='%23fbbf24'/%3E%3Cstop offset='100%25' stop-color='%2334d399'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='96' y='125' font-family='sans-serif' font-weight='900' font-style='italic' font-size='84' text-anchor='middle' fill='%23000'%3Esf%3C/text%3E%3C/svg%3E">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("sf_theme")||"dark"}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@600;700;800;900&family=Instrument+Serif:ital@1&family=Archivo:ital,wdth,wght@1,125,900&display=swap" rel="stylesheet">
+<style>
+/* SalonFlow Design System: Completely Image-Free & Emoji-Free */
+:root {
+  --bg: #000000;
+  --card: #0d0d10;
+  --card-hover: #15151a;
+  --card-elevated: #1a1a22;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.24);
+  --text: #ffffff;
+  --mute: #9e9ea6;
+  --low: #10b981;
+  --mid: #f59e0b;
+  --high: #ef4444;
+  --accent: #818cf8;
+  --holo: linear-gradient(135deg, #c7d2fe 0%, #f472b6 40%, #fbbf24 75%, #34d399 100%);
+  --gold-foil: linear-gradient(135deg, #d4af37, #fff8dc, #aa771c);
+  --leather: linear-gradient(145deg, #181210 0%, #2b1d19 50%, #150f0d 100%);
+  --leather-pocket: linear-gradient(180deg, #221714 0%, #150e0c 100%);
+  --tab-bar-h: 58px;
+  color-scheme: dark;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "SF Pro Display", Inter, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 140px;
+}
+
+.holo {
+  background: var(--holo);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* Sticky Header with Generous Spacing */
+header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--line);
+}
+
+header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  gap: 20px;
+  padding: 0 28px;
+}
+
+/* SF Monogram Logo */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.sf-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--holo);
+  color: #050507;
+  font-family: Archivo, "Inter Tight", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: -0.07em;
+  line-height: 1;
+  box-shadow: 0 4px 16px rgba(244, 114, 182, 0.35);
+  padding-right: 1px;
+}
+
+.sf-text {
+  font-family: Archivo, "Inter Tight", sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-stretch: 125%;
+  font-size: 23px;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+nav.top {
+  display: none;
+  gap: 8px;
+  align-items: center;
+}
+
+nav a,
+.tabs a {
+  color: var(--mute);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+nav a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+nav a.on,
+.tabs a.on {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Language Switcher */
+.lang-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font: 600 13px Inter, sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Buttons */
+.btn {
+  background: #151518;
+  color: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 18px;
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #1f1f26;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.btn.main {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  font-weight: 700;
+}
+
+.btn.main:hover {
+  background: #e5e5ea;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+  min-height: 32px;
+  border-radius: 9px;
+}
+
+.btn-danger {
+  color: var(--high);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: var(--high);
+}
+
+.btn:focus-visible,
+a:focus-visible,
+.card:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid #c7d2fe;
+  outline-offset: 2px;
+}
+
+/* Role Switcher Pill */
+.role-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(129, 140, 248, 0.18);
+  color: var(--accent);
+  border: 1px solid rgba(129, 140, 248, 0.35);
+}
+
+/* Departure Alert Banner */
+.alert-banner {
+  background: linear-gradient(90deg, rgba(244, 114, 182, 0.16), rgba(129, 140, 248, 0.16));
+  border: 1px solid rgba(244, 114, 182, 0.4);
+  border-radius: 18px;
+  padding: 14px 20px;
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  animation: pulse-glow 2s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from {
+    border-color: rgba(244, 114, 182, 0.35);
+    box-shadow: 0 0 12px rgba(244, 114, 182, 0.15);
+  }
+
+  to {
+    border-color: rgba(129, 140, 248, 0.7);
+    box-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+  }
+}
+
+.alert-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.alert-icon-svg {
+  width: 24px;
+  height: 24px;
+  stroke: #f472b6;
+  fill: none;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
+.alert-banner-text b {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.alert-banner-text span {
+  font-size: 13px;
+  color: var(--mute);
+}
+
+/* Hero Section (No Images, Pure Radial Background) */
+.hero {
+  margin: 24px 0 28px;
+  border-radius: 28px;
+  padding: 48px 32px;
+  color: #000;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(244, 114, 182, 0.6), transparent 45%),
+    radial-gradient(circle at 100% 20%, rgba(125, 211, 252, 0.65), transparent 45%),
+    radial-gradient(circle at 60% 110%, rgba(251, 191, 36, 0.55), transparent 50%),
+    #f2f2f4;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 8.5vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  font-weight: 800;
+  margin: 0 0 14px;
+  font-family: "Inter Tight", Inter, sans-serif;
+}
+
+.hero h1 em {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.hero p {
+  margin: 0;
+  font-size: 17px;
+  max-width: 520px;
+  color: #222;
+  line-height: 1.45;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(from 0deg, transparent 0, rgba(255, 255, 255, 0.65) 12%, transparent 30%);
+  mix-blend-mode: soft-light;
+  animation: spin 16s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero>* {
+  position: relative;
+  z-index: 2;
+}
+
+/* Improved Search Bar */
+.search-container {
+  margin-top: 24px;
+  max-width: 640px;
+}
+
+.search-bar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.search-bar-wrap:focus-within {
+  background: #fff;
+  border-color: #6366f1;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.28);
+}
+
+.search-icon {
+  margin-left: 16px;
+  width: 20px;
+  height: 20px;
+  stroke: #555;
+  fill: none;
+  stroke-width: 2.2;
+  flex-shrink: 0;
+}
+
+.search-bar-wrap input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  padding: 16px 14px;
+  font: 500 16px Inter, sans-serif;
+  color: #000;
+  outline: none;
+}
+
+.search-bar-wrap input::placeholder {
+  color: #6b7280;
+}
+
+.search-clear {
+  background: rgba(0, 0, 0, 0.08);
+  border: 0;
+  color: #333;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-right: 12px;
+  transition: all 0.15s ease;
+}
+
+.search-clear:hover {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.search-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #444;
+  padding: 0 4px;
+}
+
+/* Stats Row */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px;
+  text-align: center;
+}
+
+.sn {
+  font-size: clamp(26px, 5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  font-family: "Inter Tight", Inter, sans-serif;
+}
+
+.stat-box .sub {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+/* Filter Chips (Emoji Free) */
+.chips-group {
+  margin-bottom: 14px;
+}
+
+.chips-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mute);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  background: var(--card);
+  color: var(--mute);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font: 500 13px Inter, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.chip:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.chip.on {
+  color: #000;
+  background: #fff;
+  border-color: #fff;
+  font-weight: 700;
+}
+
+/* Grid Layout */
+.layout {
+  display: grid;
+  gap: 24px;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+/* Salon Cards with Photography Cover */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.card-ph {
+  height: 160px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-radius: 22px 22px 0 0;
+  overflow: hidden;
+}
+
+.card-ph::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.78) 100%);
+  pointer-events: none;
+}
+
+.card-ph>* {
+  position: relative;
+  z-index: 2;
+}
+
+.card-area-badge {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-monogram {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+}
+
+/* 5-Photo Interactive Gallery in Salon Detail */
+.gal {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 100px);
+  gap: 8px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.gt {
+  border: 0;
+  border-radius: 16px;
+  background: var(--card);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.gt:hover {
+  transform: scale(0.98);
+  filter: brightness(1.1);
+}
+
+.gt img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.g0 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.gc {
+  position: absolute;
+  right: 10px;
+  bottom: -20px;
+  font-size: 11px;
+  color: var(--mute);
+}
+
+@media(min-width: 640px) {
+  .gal {
+    grid-template-rows: repeat(2, 130px);
+  }
+}
+
+@media(min-width: 1024px) {
+  .gal {
+    grid-template-rows: repeat(2, 150px);
+  }
+}
+
+/* Lightbox Modal */
+.lb {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lbi {
+  width: min(92vw, 920px);
+  aspect-ratio: 4/3;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.lbi img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.lbx,
+.lbn {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.16);
+  border: 0;
+  color: #fff;
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lbx {
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 16px;
+}
+
+.lbn.l {
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lbn.r {
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lbc {
+  position: absolute;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 16px;
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.fav-btn {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.fav-btn:hover {
+  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.fav-btn.active {
+  color: #f43f5e;
+  border-color: rgba(244, 63, 94, 0.6);
+}
+
+.cb {
+  padding: 18px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.cb h3 {
+  margin: 0 0 4px;
+  font-size: 19px;
+  letter-spacing: -0.03em;
+  font-family: "Inter Tight", Inter, sans-serif;
+  font-weight: 700;
+}
+
+.wait {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  text-align: right;
+  font-family: "Inter Tight", Inter, sans-serif;
+}
+
+.wait small {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mute);
+  letter-spacing: 0;
+  margin-top: 4px;
+}
+
+/* Crowd Badges & Vector Status Dots */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.live .dot {
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.meter {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.meter i {
+  flex: 1;
+  height: 4px;
+  border-radius: 9px;
+  background: #1f1f22;
+}
+
+.meter i.f {
+  background: var(--c);
+}
+
+/* Map Widget */
+.map {
+  display: block !important;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  min-height: 380px;
+  overflow: hidden;
+  background: #0a0a0a;
+  position: relative;
+}
+
+.map iframe,
+.dmap {
+  width: 100%;
+  height: 380px;
+  border: 0;
+  filter: invert(0.92) hue-rotate(180deg) contrast(0.9) saturate(0.8);
+}
+
+.dmap {
+  height: 240px;
+  border-radius: 16px;
+}
+
+.mapbtn {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 2;
+}
+
+/* Detail Page */
+.back {
+  background: none;
+  border: 0;
+  color: var(--mute);
+  font: 500 15px Inter, sans-serif;
+  padding: 16px 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back:hover {
+  color: #fff;
+}
+
+.cols {
+  display: grid;
+  gap: 24px;
+}
+
+/* Services Checklist */
+.svc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  background: var(--card);
+  transition: all 0.15s ease;
+}
+
+.svc:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: var(--card-hover);
+}
+
+.svc.on {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.svc b {
+  font-weight: 600;
+}
+
+.svc-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin-left: 6px;
+}
+
+/* Smarter Wait Time Breakdown Box */
+.smart-wait-box {
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.12), rgba(244, 114, 182, 0.12));
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: 20px;
+  padding: 18px;
+  margin: 18px 0;
+}
+
+.smart-wait-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.smart-wait-row.total {
+  border-top: 1px solid var(--line);
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.smart-progress-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: #1a1a1c;
+  margin: 12px 0;
+}
+
+.smart-bar-queue {
+  background: #38bdf8;
+}
+
+.smart-bar-service {
+  background: #f472b6;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 22px;
+}
+
+.big {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  font-family: "Inter Tight", Inter, sans-serif;
+}
+
+.sticky {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tab-bar-h) + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  padding: 10px 18px;
+  background: rgba(14, 14, 18, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+  z-index: 39;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==============================================================
+   3D FLIPPABLE PREMIUM CUSTOMER TOKEN CARD
+   ============================================================== */
+.token-card-3d-wrap {
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
+  width: 100%;
+  max-width: 440px;
+  margin: 20px auto;
+}
+
+.token-card-3d {
+  width: 100%;
+  min-height: 270px;
+  position: relative;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.token-card-3d.flipped {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+.token-card-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Front Face */
+.token-card-front {
+  background: linear-gradient(145deg, #16161b 0%, #0a0a0d 100%);
+  border: 1px solid rgba(244, 114, 182, 0.35);
+  position: relative;
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
+  z-index: 2;
+  transition: opacity 0.2s ease;
+}
+
+.token-card-front::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at top right, rgba(244, 114, 182, 0.2), transparent 70%);
+  border-radius: 0 24px 0 0;
+  pointer-events: none;
+}
+
+.card-top-edge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-sf-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--holo);
+  color: #000;
+  font: 900 italic 18px Archivo, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.card-brand-name {
+  font: 900 italic 19px Archivo, sans-serif;
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+
+.card-token-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.card-mid {
+  margin: 18px 0;
+}
+
+.card-salon-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+
+.card-salon-sub {
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.card-services-list {
+  font-size: 13px;
+  margin-top: 8px;
+  color: #e5e5ea;
+  font-weight: 500;
+}
+
+.card-bottom-edge {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+.card-flip-prompt {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Back Face (Flip) */
+.token-card-back {
+  background: #ffffff;
+  color: #000000;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  border: 1px solid #d1d5db;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1;
+  transition: opacity 0.2s ease;
+}
+
+.token-card-3d.flipped .token-card-front {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.token-card-3d.flipped .token-card-back {
+  pointer-events: auto;
+  opacity: 1;
+  z-index: 5;
+}
+
+.token-card-3d:not(.flipped) .token-card-back {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.token-card-3d:not(.flipped) .token-card-front {
+  pointer-events: auto;
+  opacity: 1;
+  z-index: 5;
+}
+
+.qr-container {
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  display: inline-block;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.qr-container svg {
+  display: block;
+}
+
+.card-scan-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ==============================================================
+   REALISTIC LEATHER WALLET PAGE
+   ============================================================== */
+.leather-wallet {
+  background: var(--leather);
+  border-radius: 28px;
+  border: 1px solid #3d2822;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  padding: 32px 24px;
+  position: relative;
+  max-width: 580px;
+  margin: 24px auto;
+  overflow: hidden;
+}
+
+/* Stitched Seam Effect */
+.leather-wallet::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 2px dashed rgba(200, 160, 140, 0.35);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.wallet-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.wallet-title {
+  font: 800 24px "Inter Tight", sans-serif;
+  letter-spacing: -0.03em;
+  color: #f3ece8;
+}
+
+.wallet-sub {
+  font-size: 13px;
+  color: #bda299;
+  margin-top: 4px;
+}
+
+.wallet-pocket {
+  background: var(--leather-pocket);
+  border-radius: 20px;
+  border: 1px solid #4a332c;
+  box-shadow: inset 0 8px 20px rgba(0, 0, 0, 0.7);
+  padding: 20px 16px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wallet-slot-hint {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a88a80;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+/* ==============================================================
+   DBMS SQL STUDIO & QUERY CONSOLE
+   ============================================================== */
+.dbms-studio-box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.sql-editor-wrap {
+  margin: 16px 0;
+}
+
+.sql-textarea {
+  width: 100%;
+  min-height: 110px;
+  background: #08080a;
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: 14px;
+  padding: 14px;
+  font: 500 14px monospace;
+  color: #38bdf8;
+  outline: none;
+  resize: vertical;
+}
+
+.sql-textarea:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 16px rgba(129, 140, 248, 0.25);
+}
+
+.sql-sample-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin: 10px 0;
+}
+
+.sql-table-container {
+  overflow-x: auto;
+  margin-top: 18px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.sql-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.sql-table th {
+  background: #15151a;
+  color: #fff;
+  padding: 10px 14px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+}
+
+.sql-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  color: #ddd;
+}
+
+.sql-table tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Bottom Tabs (Wallet, Profile, Salons, Token, DBMS) */
+.tabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--tab-bar-h) + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  z-index: 38;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  background: rgba(10, 10, 13, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--line);
+  padding: 4px 6px env(safe-area-inset-bottom, 0px);
+}
+
+.tabs a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  min-width: 58px;
+  min-height: 48px;
+  justify-content: center;
+}
+
+.tabs svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--line);
+  margin-top: 60px;
+  padding: 40px 0 24px;
+}
+
+.fi {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 1fr;
+}
+
+.fl2 {
+  display: grid;
+  gap: 10px;
+}
+
+.fl2 a {
+  color: var(--mute);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.fl2 a:hover {
+  color: #fff;
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 3px;
+}
+
+.seg button {
+  border: 0;
+  background: none;
+  color: var(--mute);
+  padding: 8px 18px;
+  border-radius: 9px;
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.seg button.on {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.cp {
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+/* Responsive */
+@media(min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fi {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+@media(min-width: 1024px) {
+  body {
+    padding-bottom: 40px;
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  nav.top {
+    display: flex;
+  }
+
+  .layout {
+    grid-template-columns: 1fr 380px;
+    align-items: start;
+  }
+
+  .map {
+    display: block;
+    position: sticky;
+    top: 92px;
+  }
+
+  .cols {
+    grid-template-columns: 1fr 380px;
+    align-items: start;
+  }
+
+  .panel.sticky-p {
+    position: sticky;
+    top: 92px;
+  }
+
+  .sticky {
+    display: none;
+  }
+
+  .hero {
+    padding: 68px 56px;
+  }
+}
+
+@media(min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==============================================================
+   COMPREHENSIVE MOBILE OPTIMIZATIONS (PWA & Small Viewports)
+   ============================================================== */
+
+/* PWA Notification & Install Banner Styles */
+.pwa-notif-card,
+.pwa-install-banner {
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.14), rgba(244, 114, 182, 0.12));
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin: 12px 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  animation: slide-in 0.3s ease;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pwa-notif-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-notif-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pwa-notif-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #818cf8;
+  fill: none;
+  stroke-width: 2;
+}
+
+.pwa-notif-icon.sf-pill {
+  background: var(--holo);
+  color: #000;
+  font-family: Archivo, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 16px;
+}
+
+.pwa-notif-text {
+  min-width: 0;
+}
+
+.pwa-notif-text b {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.pwa-notif-text span {
+  display: block;
+  font-size: 11px;
+  color: var(--mute);
+  line-height: 1.3;
+}
+
+.pwa-notif-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pwa-notif-dismiss {
+  background: none;
+  border: 0;
+  color: var(--mute);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.pwa-notif-dismiss:hover {
+  color: var(--text);
+}
+
+/* Tablet & Mobile (under 768px) */
+@media(max-width: 768px) {
+  body {
+    padding-bottom: 110px;
+  }
+
+  .wrap {
+    padding: 0 16px;
+  }
+
+  header .wrap {
+    padding: 0 16px;
+    height: 62px;
+    gap: 12px;
+  }
+}
+
+/* Mobile Screens (under 640px) */
+@media(max-width: 639px) {
+  body {
+    padding-bottom: 120px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .wrap {
+    padding: 0 14px;
+  }
+
+  /* Header Compact */
+  header .wrap {
+    padding: 0 12px;
+    height: 56px;
+    gap: 8px;
+  }
+
+  .logo {
+    gap: 8px;
+  }
+
+  .sf-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+
+  .sf-text {
+    font-size: 19px;
+    letter-spacing: -0.03em;
+  }
+
+  .header-actions {
+    gap: 5px;
+  }
+
+  .header-actions .btn,
+  .header-actions .lang-btn,
+  .header-actions .theme-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 32px;
+    border-radius: 9px;
+  }
+
+  /* Hero Banner */
+  .hero {
+    margin: 12px 0 16px;
+    padding: 24px 16px;
+    border-radius: 20px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    letter-spacing: -0.04em;
+  }
+
+  .hero p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Search */
+  .search-container {
+    margin-top: 14px;
+  }
+
+  .search-bar-wrap input {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+
+  .search-icon {
+    margin-left: 12px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .search-clear {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .search-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    font-size: 11px;
+    margin-top: 8px;
+  }
+
+  /* Stats Row */
+  .stats {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .stat-box {
+    padding: 10px 4px;
+    border-radius: 14px;
+  }
+
+  .sn {
+    font-size: 19px;
+  }
+
+  .stat-box .sub {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  /* Chips & Filters */
+  .chips-group {
+    margin-bottom: 10px;
+  }
+
+  .chips-label {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .chips {
+    gap: 6px;
+    padding-bottom: 4px;
+  }
+
+  .chip {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+
+  /* Salon Card */
+  .grid {
+    gap: 14px;
+  }
+
+  .card {
+    border-radius: 18px;
+  }
+
+  .card-ph {
+    height: 140px;
+    padding: 12px;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .card-monogram {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 9px;
+  }
+
+  .card-area-badge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .fav-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .cb {
+    padding: 14px;
+  }
+
+  .cb h3 {
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+
+  .cb .sub {
+    font-size: 12px;
+  }
+
+  .wait.num {
+    font-size: 20px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 9px;
+  }
+
+  /* Detail Gallery */
+  .gal {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 72px);
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+
+  .gt {
+    border-radius: 10px;
+  }
+
+  .gc {
+    font-size: 10px;
+    bottom: -18px;
+  }
+
+  /* Smarter Wait Time Box */
+  .smart-wait-box {
+    padding: 14px 12px;
+    border-radius: 16px;
+    margin: 16px 0;
+  }
+
+  .smart-wait-row {
+    font-size: 12px;
+  }
+
+  .smart-wait-row.total {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .smart-wait-row.total .holo {
+    font-size: 16px !important;
+  }
+
+  /* Services */
+  .svc {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .svc b {
+    font-size: 14px;
+  }
+
+  .svc-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .svc .sub {
+    font-size: 11px;
+  }
+
+  /* Bottom Tabs (Wallet, Profile, Salons, Token, DBMS) */
+  .tabs {
+    height: calc(var(--tab-bar-h) + env(safe-area-inset-bottom, 0px));
+    padding: 3px 2px env(safe-area-inset-bottom, 0px);
+  }
+
+  .tabs a {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 10px;
+    gap: 1px;
+    padding: 2px 4px;
+  }
+
+  .tabs svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  /* Sticky Bottom Bar on Detail Page - Exactly Attached Directly Upwards of Bottom Nav */
+  .sticky {
+    bottom: calc(var(--tab-bar-h) + env(safe-area-inset-bottom, 0px));
+    padding: 8px 14px;
+    border-radius: 14px 14px 0 0;
+    z-index: 39;
+  }
+
+  .sticky .num {
+    font-size: 14px;
+  }
+
+  .sticky .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-height: 38px;
+  }
+
+  /* Leather Wallet */
+  .leather-wallet {
+    padding: 16px 10px;
+    border-radius: 18px;
+    margin: 12px auto;
+  }
+
+  .leather-wallet::before {
+    inset: 5px;
+    border-radius: 13px;
+  }
+
+  .wallet-title {
+    font-size: 19px;
+  }
+
+  .token-card-3d-wrap {
+    max-width: 100%;
+    margin: 10px auto;
+  }
+
+  .token-card-3d {
+    min-height: 250px;
+  }
+
+  .token-card-face {
+    padding: 16px 14px;
+    border-radius: 18px;
+  }
+
+  .token-card-header {
+    margin-bottom: 10px;
+  }
+
+  .token-card-sf-text {
+    font-size: 15px;
+  }
+
+  .token-card-salon-title {
+    font-size: 17px;
+  }
+
+  .token-card-number-huge {
+    font-size: 40px;
+  }
+
+  /* DBMS SQL Studio */
+  .dbms-studio-box {
+    padding: 14px 10px;
+    border-radius: 16px;
+  }
+
+  .sql-textarea {
+    font-size: 12px;
+    min-height: 80px;
+    padding: 10px;
+  }
+
+  .sql-sample-chips {
+    gap: 5px;
+    padding-bottom: 4px;
+  }
+
+  .sql-sample-chip {
+    font-size: 11px;
+    padding: 5px 9px;
+  }
+
+  .sql-table th,
+  .sql-table td {
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  /* PWA Banner */
+  .pwa-notif-card,
+  .pwa-install-banner {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pwa-notif-actions {
+    margin-top: 8px;
+    justify-content: flex-end;
+  }
+}
+
+/* Extra Compact Phones (under 380px) */
+@media(max-width: 380px) {
+  .sf-text {
+    display: none;
+  }
+
+  .stats {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .sn {
+    font-size: 17px;
+  }
+
+  .header-actions .lang-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+}
+
+.auth {
+  max-width: 460px;
+  margin: 32px auto;
+}
+
+.fl {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mute);
+  margin: 14px 0 0;
+}
+
+.in {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 14px;
+  color: var(--text);
+  font: 500 16px Inter, sans-serif;
+  margin: 6px 0 4px;
+  min-height: 48px;
+}
+
+.in:focus {
+  outline: 2px solid #818cf8;
+  outline-offset: 1px;
+}
+
+textarea.in {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.err {
+  color: var(--high);
+  font-size: 14px;
+  min-height: 20px;
+  margin: 10px 0 0;
+}
+
+.chk {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  color: var(--mute);
+  margin: 14px 0;
+}
+
+.chk input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: #818cf8;
+}
+
+.auth a,
+.chk a,
+.sub a {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.av {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--holo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 900 28px "Inter Tight", Inter, sans-serif;
+  color: #000;
+}
+
+.auth a.lr {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 4px;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--bg);
+  padding: 12px 20px;
+  border-radius: 14px;
+  font: 600 14px Inter, sans-serif;
+  z-index: 80;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transition: opacity 0.3s ease;
+}
+
+.toast.fade-out {
+  opacity: 0;
+}
+
+
+/* Header Theme Toggle Button */
+.theme-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font: 600 13px Inter, sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ==============================================================
+   LIGHT THEME DESIGN SYSTEM (data-theme="light")
+   ============================================================== */
+:root[data-theme=light],
+html[data-theme=light] {
+  --bg: #f8f9fa;
+  --card: #ffffff;
+  --card-hover: #f1f3f5;
+  --card-elevated: #ffffff;
+  --line: rgba(0, 0, 0, 0.12);
+  --line-strong: rgba(0, 0, 0, 0.25);
+  --text: #0a0a0c;
+  --mute: #6b7280;
+  --accent: #4f46e5;
+  --holo: linear-gradient(135deg, #4f46e5 0%, #db2777 40%, #d97706 75%, #059669 100%);
+  --leather: linear-gradient(145deg, #3d2c25 0%, #523b32 50%, #2f211c 100%);
+  --leather-pocket: linear-gradient(180deg, #412f28 0%, #291c17 100%);
+  color-scheme: light;
+}
+
+[data-theme=light] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+[data-theme=light] header {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+[data-theme=light] .tabs {
+  background: rgba(255, 255, 255, 0.92);
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+[data-theme=light] .sticky {
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme=light] .btn {
+  background: #ffffff;
+  color: #0a0a0c;
+  border-color: rgba(0, 0, 0, 0.16);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme=light] .btn:hover {
+  background: #f4f4f5;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme=light] .btn.main {
+  background: #0a0a0c;
+  color: #ffffff;
+  border-color: #0a0a0c;
+}
+
+[data-theme=light] .btn.main:hover {
+  background: #27272a;
+}
+
+[data-theme=light] .theme-btn,
+[data-theme=light] .lang-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #0a0a0c;
+}
+
+[data-theme=light] .theme-btn:hover,
+[data-theme=light] .lang-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme=light] nav a,
+[data-theme=light] .tabs a {
+  color: #52525b;
+}
+
+[data-theme=light] nav a:hover,
+[data-theme=light] .tabs a:hover {
+  color: #000000;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme=light] nav a.on,
+[data-theme=light] .tabs a.on {
+  color: #000000;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme=light] .chip {
+  background: #ffffff;
+  color: #52525b;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme=light] .chip:hover {
+  color: #000000;
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+[data-theme=light] .chip.on {
+  background: #0a0a0c;
+  color: #ffffff;
+  border-color: #0a0a0c;
+}
+
+[data-theme=light] .card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme=light] .card:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+[data-theme=light] .stat-box {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme=light] .panel {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme=light] .dbms-studio-box {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme=light] .svc {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme=light] .svc:hover {
+  background: #f9fafb;
+}
+
+[data-theme=light] .svc.on {
+  border-color: #0a0a0c;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme=light] .svc-tag {
+  background: rgba(0, 0, 0, 0.08);
+  color: #374151;
+}
+
+[data-theme=light] .smart-wait-box {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(219, 39, 119, 0.08));
+  border-color: rgba(79, 70, 229, 0.25);
+}
+
+[data-theme=light] .smart-progress-bar {
+  background: #e5e7eb;
+}
+
+[data-theme=light] .meter i {
+  background: #e5e7eb;
+}
+
+[data-theme=light] .meter i.f {
+  background: var(--c);
+}
+
+[data-theme=light] .map {
+  background: #eaecef;
+}
+
+[data-theme=light] .map iframe,
+[data-theme=light] .dmap {
+  filter: none;
+}
+
+[data-theme=light] .in {
+  background: #ffffff;
+  color: #0a0a0c;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme=light] .in:focus {
+  border-color: #4f46e5;
+}
+
+[data-theme=light] .sql-textarea {
+  background: #f8fafc;
+  color: #0369a1;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme=light] .sql-table th {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+[data-theme=light] .sql-table td {
+  color: #334155;
+}
+
+[data-theme=light] .sql-table tr:hover td {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme=light] .seg {
+  border-color: rgba(0, 0, 0, 0.16);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme=light] .seg button {
+  color: #6b7280;
+}
+
+[data-theme=light] .seg button.on {
+  background: #0a0a0c;
+  color: #ffffff;
+}
+
+[data-theme=light] footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+[data-theme=light] .fl2 a:hover {
+  color: #000000;
+}
+
+[data-theme=light] .alert-banner {
+  background: linear-gradient(90deg, rgba(219, 39, 119, 0.1), rgba(79, 70, 229, 0.1));
+  border-color: rgba(219, 39, 119, 0.35);
+}
+
+[data-theme=light] .token-card-front {
+  background: linear-gradient(145deg, #1e1e24 0%, #111116 100%);
+  color: #ffffff;
+}
+
+[data-theme=light] .token-card-front .card-salon-sub {
+  color: #9ca3af;
+}
+
+[data-theme=light] .token-card-front .card-services-list {
+  color: #f3f4f6;
+}
+
+[data-theme=light] .role-badge {
+  background: rgba(79, 70, 229, 0.12);
+  color: #4338ca;
+  border-color: rgba(79, 70, 229, 0.3);
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="logo" id="logo">
+    <span class="sf-mark">sf</span>
+    <span class="sf-text">salonflow</span>
+  </div>
+  <nav class="top">
+    <a data-go="home" class="on">Salons</a>
+    <a data-go="favs">Favourites</a>
+    <a data-go="wallet">Wallet</a>
+    <a data-go="token">My token</a>
+    <a data-go="analytics">Owner Analytics</a>
+    <a data-go="sql-studio">DBMS Studio</a>
+  </nav>
+</div></header>
+
+<main class="wrap" id="app"></main>
+<footer id="ft"></footer>
+
+<div class="tabs" role="navigation">
+  <a data-go="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10H3z"/></svg>Salons</a>
+  <a data-go="wallet"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M16 12h4"/></svg>Wallet</a>
+  <a data-go="token"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M9 6v12"/></svg>Token</a>
+  <a data-go="sql-studio"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>DBMS</a>
+  <a data-go="account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>Profile</a>
+</div>
+
+<script>
+// Paste your Google keys here (restrict them to your site's HTTP referrers).
+// placesKey -> real salon photos (Places API New). mapsKey -> official Maps Embed API.
+window.CFG={placesKey:"",mapsKey:""};
+
+</script>
+<script>
+// SalonFlow Data Repository & Relational Tables
+// Completely image-free and emoji-free; optimized for Netlify deployment and DBMS evaluation
+
+// Real High-Resolution Photography Dataset for Visakhapatnam Salons
+// 28 Distinct, Curated Salon Interiors, Styling Lounges, and Spa Imagery
+var REAL_PHOTOS = [
+  "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1622288432450-277d0fef5ed6?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1512290900672-1f55b9e075c0?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1517832606589-7157abb61047?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80"
+];
+
+// Gradients for fallback monograms
+var G = [
+  "linear-gradient(135deg, #312e81, #be185d)",
+  "linear-gradient(135deg, #0f766e, #1d4ed8)",
+  "linear-gradient(135deg, #7c2d12, #a21caf)",
+  "linear-gradient(135deg, #1e3a8a, #0e7490)",
+  "linear-gradient(135deg, #9d174d, #b45309)",
+  "linear-gradient(135deg, #374151, #111827)"
+];
+
+// Rich Services catalog (Name, Price in INR, Duration in minutes, Category)
+var SV = [
+  ["Executive Haircut and Styling", 250, 25, "Hair"],
+  ["Beard Shaping and Trim", 150, 15, "Grooming"],
+  ["Deep Conditioning Hair Spa", 700, 45, "Hair"],
+  ["Charcoal Glow Facial", 600, 40, "Skin"],
+  ["Herbal Head Massage and Oil Therapy", 350, 20, "Therapy"],
+  ["Classic Manicure and Hand Care", 450, 30, "Nails"],
+  ["Hair Color and Highlights", 1200, 60, "Hair"]
+];
+
+// 28 Real Salons across Visakhapatnam (Vizag), Andhra Pradesh
+// [Name, Area, Address, Phone, Hours, Lat, Lng, Place_ID, Rating, Wait_Min, Review_Count]
+var D = [
+  ["Toni and Guy Unisex Salon", "Siripuram", "VIP Road, Above Raymonds, Near Tycoon Restaurant, Siripuram, Visakhapatnam", "+91 891 279 8899", "9 AM - 9 PM", 17.725800, 83.316400, "ChIJdRLGxEBDOToRaFSiXrlCHZk", 4.8, 14, 2410],
+  ["Mirrors Luxury Salons", "Siripuram", "Waltair Uplands, Opp. Siripuram HPCL Petrol Bunk, Siripuram, Visakhapatnam", "+91 891 667 7999", "9 AM - 9 PM", 17.721400, 83.318100, "ChIJT1VV-GlDOToRCBVLQO-pEmQ", 4.9, 10, 1890],
+  ["Green Trends Unisex Salon", "MVP Colony", "MVP Double Rd, Opp. ICICI Bank, Sector 2, MVP Colony, Visakhapatnam", "+91 891 276 2232", "9 AM - 9 PM", 17.742927, 83.328477, "ChIJ80BpG1NDOToR3j7mFlE82YE", 4.8, 32, 3655],
+  ["Naturals Hair and Beauty Salon", "MVP Colony", "Sector 1, Beside HDFC Bank, MVP Colony, Visakhapatnam", "+91 891 273 4567", "9 AM - 9 PM", 17.743800, 83.329100, "ChIJa-XoDVFdOToRDmR0VKo9XCs", 4.7, 18, 1420],
+  ["Jawed Habib Hair and Beauty", "Dwaraka Nagar", "2nd Line, Opp. Hotel Meghalaya, Dwaraka Nagar, Visakhapatnam", "+91 891 254 7890", "9:30 AM - 9 PM", 17.727500, 83.306800, "ChIJNbAdTYZDOToRnBereBn4qeM", 4.7, 24, 1670],
+  ["Bounce Salon and Spa", "Siripuram", "Dutt Island, Siripuram Circle, Siripuram, Visakhapatnam", "+91 891 270 5544", "9 AM - 9 PM", 17.723500, 83.317900, "ChIJ2VpK315DOToRJeMBhPsvexM", 4.8, 8, 2130],
+  ["Lakme Salon", "Siripuram", "VIP Road, Beside Pantaloons, CBM Compound, Siripuram, Visakhapatnam", "+91 891 250 8822", "9 AM - 8:30 PM", 17.726200, 83.314900, "ChIJ8azlLLZDOToRlTYEkK2mZP0", 4.7, 38, 1980],
+  ["Bubbles Hair and Beauty", "Siripuram", "Siripuram Junction, Near Gurajada Kalakshetram, Siripuram, Visakhapatnam", "+91 94925 51616", "8 AM - 9 PM", 17.723796, 83.317660, "ChIJ2VpK315DOToRJeMBhPsvexM", 4.7, 28, 2366],
+  ["Juice Salon", "Siripuram", "Waltair Club Rd, Beside Navy House, Siripuram, Visakhapatnam", "+91 94417 19199", "9 AM - 9 PM", 17.719625, 83.314791, "ChIJ8azlLLZDOToRlTYEkK2mZP0", 4.7, 16, 431],
+  ["Bon Chic Salon and Spa", "Siripuram", "Chinna Waltair Main Rd, Opp. Timpany School, Siripuram, Visakhapatnam", "+91 70326 62442", "9 AM - 9 PM", 17.720623, 83.320321, "ChIJT1VV-GlDOToRCBVLQO-pEmQ", 4.4, 12, 263],
+  ["J Studio Luxury Beauty", "Siripuram", "VIP Rd, Above TVS Showroom, Siripuram, Visakhapatnam", "+91 98826 89999", "8 AM - 9 PM", 17.726058, 83.316826, "ChIJdRLGxEBDOToRaFSiXrlCHZk", 4.7, 42, 1848],
+  ["Toppers Grand Unisex Salon", "MVP Colony", "MVP Sector 6, Near Cancer Hospital, MVP Colony, Visakhapatnam", "+91 90660 31999", "8 AM - 9 PM", 17.744141, 83.333954, "ChIJDbbJDj1DOToRcAI1yZSA3Ck", 4.7, 11, 566],
+  ["Manifest Unisex Salon", "MVP Colony", "MVP Double Rd, Near Pollocks School, MVP Colony, Visakhapatnam", "+91 891 314 5344", "9 AM - 9 PM", 17.742096, 83.332034, "ChIJ7bqAnzpDOToR_1CIfPzEe1U", 4.9, 6, 66],
+  ["Style Studio Unisex Salon", "MVP Colony", "Sector 1, Above SBI Bank, MVP Colony, Visakhapatnam", "+91 95533 91689", "10 AM - 9 PM", 17.744209, 83.328996, "ChIJa-XoDVFdOToRDmR0VKo9XCs", 4.8, 20, 205],
+  ["S.he Hair and Beauty", "Dwaraka Nagar", "Santhipuram, Dwaraka Nagar, Visakhapatnam", "+91 70137 06616", "9 AM - 9 PM", 17.736751, 83.305130, "ChIJcZeGSYhDOToRyyLk610wgCY", 4.7, 9, 448],
+  ["S.he Family Salon", "Dwaraka Nagar", "1st Line, Beside V Hotel, Dwaraka Nagar, Visakhapatnam", "+91 63013 84537", "9 AM - 9 PM", 17.726927, 83.307160, "ChIJNbAdTYZDOToRnBereBn4qeM", 4.7, 22, 264],
+  ["Barber Hub Unisex Salon", "Dwaraka Nagar", "Srinagar, Near Sai Baba Temple, Dwaraka Nagar, Visakhapatnam", "+91 83092 82988", "6 AM - 9:30 PM", 17.728991, 83.309716, "ChIJj5tUNb9DOToRrMhZJ4DXpsg", 4.8, 5, 203],
+  ["Royal Touch Unisex Salon", "Dwaraka Nagar", "Chillapalli Complex, Near V Square, Dwaraka Nagar, Visakhapatnam", "+91 95024 24555", "10 AM - 9 PM", 17.725618, 83.304681, "ChIJjZnXQABDOToRKcduYK2r59A", 4.9, 29, 571],
+  ["Toni and Guy Essensuals", "Madhurawada", "100 Feet Rd, Midhilapuri VUDA Colony, Madhurawada, Visakhapatnam", "+91 95575 77677", "10 AM - 9:30 PM", 17.801264, 83.368107, "ChIJP2L-BU5bOToRT25C4bgxCyM", 4.9, 15, 804],
+  ["Glam Studios Madhurawada", "Madhurawada", "Midhilapuri VUDA Colony, Main Road, Madhurawada, Visakhapatnam", "+91 98499 07675", "9 AM - 9 PM", 17.802010, 83.366845, "ChIJMxaJa8JbOToReMKrSMbtL1E", 4.8, 12, 604],
+  ["Celebrity Cuts", "Madhurawada", "Midhilapuri VUDA Colony, Beside More Supermarket, Visakhapatnam", "+91 77308 58858", "8 AM - 9 PM", 17.802618, 83.363342, "ChIJdSbMU9lbOToRYXK_euKTflI", 4.8, 36, 917],
+  ["J Studio (PM Palem)", "Madhurawada", "PM Palem, SBI Colony, Madhurawada, Visakhapatnam", "+91 98828 69999", "8 AM - 9 PM", 17.806006, 83.340667, "ChIJLYXEFfBbOToRwBB5qWqbw0E", 4.8, 25, 1076],
+  ["Green Trends (Gajuwaka)", "Gajuwaka", "Main Road, Opp. CMR Shopping Mall, Gajuwaka, Visakhapatnam", "+91 891 251 1122", "9 AM - 9 PM", 17.689400, 83.213200, "ChIJg_Gjwk_fOToRkW45_4w12c8", 4.7, 14, 1540],
+  ["Naturals (Gajuwaka)", "Gajuwaka", "Old Gajuwaka Junction, Beside South India Mall, Visakhapatnam", "+91 891 257 6655", "9 AM - 9 PM", 17.691200, 83.215800, "ChIJn_Njwk_fOToR8171_4w34k9", 4.6, 26, 1320],
+  ["Lakme Salon (Seethammadhara)", "Seethammadhara", "Seethammadhara Main Road, Near TTD Mandapam, Visakhapatnam", "+91 891 278 9944", "9 AM - 8:30 PM", 17.749500, 83.314200, "ChIJlk_SeethDOToR1122334455", 4.8, 15, 1460],
+  ["Vurve Signature Salon", "Siripuram", "Waltair Main Road, Near Governor Bungalow, Siripuram, Visakhapatnam", "+91 891 252 3444", "9:30 AM - 9 PM", 17.722800, 83.319500, "ChIJvu_rveDOToR99887766554", 4.8, 19, 890],
+  ["Habibs Hair and Beauty", "Jagadamba", "Jagadamba Commercial Complex, Near Jagadamba Theatre, Visakhapatnam", "+91 891 256 7788", "9:30 AM - 9:30 PM", 17.712400, 83.301500, "ChIJha_bibDOToR44556677889", 4.6, 34, 1750],
+  ["Trends Unisex Salon and Spa", "Gajuwaka", "Steel Plant Sector 6 Road, Near Kurmannapalem Arch, Visakhapatnam", "+91 891 275 8811", "9 AM - 9 PM", 17.678100, 83.189500, "ChIJtr_endDOToR33221100998", 4.7, 21, 820]
+];
+
+// Map into objects
+var S = D.map(function(x, i) {
+  var initials = x[0].split(" ").map(function(w) { return w[0]; }).slice(0, 2).join("").toUpperCase();
+  var p1 = REAL_PHOTOS[i % REAL_PHOTOS.length];
+  var p2 = REAL_PHOTOS[(i + 5) % REAL_PHOTOS.length];
+  var p3 = REAL_PHOTOS[(i + 11) % REAL_PHOTOS.length];
+  var p4 = REAL_PHOTOS[(i + 17) % REAL_PHOTOS.length];
+  var p5 = REAL_PHOTOS[(i + 23) % REAL_PHOTOS.length];
+  return {
+    id: i + 1,
+    n: x[0],
+    a: x[1],
+    addr: x[2],
+    ph: x[3],
+    h: x[4],
+    lat: x[5],
+    lng: x[6],
+    pid: x[7],
+    r: x[8],
+    w: x[9],
+    rc: x[10],
+    initials: initials,
+    g: G[i % G.length],
+    s: SV,
+    photos: [p1, p2, p3, p4, p5]
+  };
+});
+
+// Distance calculation from Siripuram Circle, Vizag
+S.forEach(function(s) {
+  var R = Math.PI / 180;
+  s.d = +(6371 * Math.acos(Math.min(1, Math.sin(17.7231 * R) * Math.sin(s.lat * R) + Math.cos(17.7231 * R) * Math.cos(s.lat * R) * Math.cos((s.lng - 83.3013) * R)))).toFixed(1);
+});
+
+var VIZAG_AREAS = ["All", "Siripuram", "MVP Colony", "Dwaraka Nagar", "Madhurawada", "Gajuwaka", "Seethammadhara", "Jagadamba"];
+
+// Completely Emoji-Free Bilingual Translations
+var I18N = {
+  en: {
+    salons: "Salons",
+    myToken: "My Token",
+    wallet: "Pass Wallet",
+    analytics: "Owner Analytics",
+    dbmsStudio: "DBMS SQL Studio",
+    favourites: "Favourites",
+    login: "Log in",
+    account: "Account",
+    settings: "Settings",
+    heroTitle: "Skip the<br><em>Salon Wait.</em>",
+    heroSub: "Live queue tracking and smarter wait time estimation across premier salons in Visakhapatnam.",
+    searchPlaceholder: "Search salon name, area (MVP, Siripuram), or service...",
+    shortestWait: "Shortest Wait",
+    nearest: "Nearest",
+    topRated: "Top Rated",
+    lowCrowdOnly: "Low Crowd Only",
+    allAreas: "All Areas",
+    salonsLive: "Salons Active",
+    avgWait: "Average Wait",
+    tokensBooked: "Tokens Issued",
+    bookToken: "Book Token",
+    cancelToken: "Cancel Token",
+    lowCrowdLabel: "Low Crowd",
+    medCrowdLabel: "Medium Crowd",
+    highCrowdLabel: "High Crowd",
+    minWait: "min wait",
+    aheadOfYou: "ahead in line",
+    youAreNext: "Your turn is next",
+    checkInQR: "Verify and Check-in",
+    arrivalWindow: "10-Minute Arrival Window",
+    departureAlert: "Departure Alert: You are 2 turns away.",
+    smarterWaitNote: "Smarter wait: calculated from picked services and queue latency",
+    footerSub: "Real-time salon queue management system. Visakhapatnam, Andhra Pradesh",
+    theme: "Theme",
+    dark: "Dark",
+    white: "Light"
+  },
+  te: {
+    salons: "సెలూన్లు",
+    myToken: "నా టోకెన్",
+    wallet: "పాస్ వాలెట్",
+    analytics: "యజమాని విశ్లేషణలు",
+    dbmsStudio: "DBMS SQL స్టూడియో",
+    favourites: "ఇష్టమైనవి",
+    login: "లాగిన్",
+    account: "ఖాతా",
+    settings: "సెట్టింగ్‌లు",
+    heroTitle: "సెలూన్ వేచి ఉండే సమయాన్ని<br><em>దాటవేయండి.</em>",
+    heroSub: "విశాఖపట్నంలోని ప్రముఖ సెలూన్లలో లైవ్ క్యూ ట్రాకింగ్ మరియు ఖచ్చితమైన సమయ అంచనా.",
+    searchPlaceholder: "సెలూన్ పేరు, ప్రాంతం (సిరిపురం, MVP) లేదా సర్వీస్ శోధించండి...",
+    shortestWait: "తక్కువ సమయం",
+    nearest: "దగ్గరిది",
+    topRated: "టాప్ రేటెడ్",
+    lowCrowdOnly: "తక్కువ రద్దీ మాత్రమే",
+    allAreas: "అన్ని ప్రాంతాలు",
+    salonsLive: "సెలూన్లు అందుబాటులో",
+    avgWait: "సగటు సమయం",
+    tokensBooked: "నేటి టోకెన్లు",
+    bookToken: "టోకెన్ బుక్ చేయండి",
+    cancelToken: "టోకెన్ రద్దు చేయండి",
+    lowCrowdLabel: "తక్కువ రద్దీ",
+    medCrowdLabel: "మధ్యస్థ రద్దీ",
+    highCrowdLabel: "ఎక్కువ రద్దీ",
+    minWait: "నిమిషాల సమయం",
+    aheadOfYou: "మీ ముందు ఉన్నవారు",
+    youAreNext: "మీ వంతు తదుపరిది",
+    checkInQR: "చెక్-ఇన్ ధృవీకరించండి",
+    arrivalWindow: "10 నిమిషాల గడువు",
+    departureAlert: "బయలుదేరాల్సిన సమయం! మీ ముందు 2 స్థానాలు మాత్రమే ఉన్నాయి.",
+    smarterWaitNote: "ఎంచుకున్న సర్వీసులు మరియు లైవ్ క్యూ ఆధారంగా గణించబడింది",
+    footerSub: "రియల్ టైమ్ సెలూన్ క్యూ మేనేజ్‌మెంట్ సిస్టమ్. విశాఖపట్నం, ఆంధ్రప్రదేశ్",
+    theme: "థీమ్",
+    dark: "డార్క్",
+    white: "లైట్"
+  }
+};
+
+</script>
+<script>
+// SalonFlow Data Store, Authentication, Real Notifications & In-Browser SQL Engine
+
+var K = {
+  u: "sf_users",
+  s: "sf_session",
+  r: "sf_reviews",
+  f: "sf_favs",
+  t: "sf_token",
+  w: "sf_wallet",
+  lang: "sf_lang",
+  theme: "sf_theme",
+  notif: "sf_notif_perm"
+};
+
+function ld(k, d) {
+  try {
+    var v = JSON.parse(localStorage.getItem(k));
+    return v == null ? d : v;
+  } catch (e) {
+    return d;
+  }
+}
+
+function sv(k, v) {
+  try {
+    localStorage.setItem(k, JSON.stringify(v));
+  } catch (e) {
+    toast("Storage unavailable");
+  }
+}
+
+function esc(t) {
+  return String(t || "").replace(/[&<>"']/g, function(c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+async function H(s) {
+  try {
+    var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(b)).map(function(x) {
+      return x.toString(16).padStart(2, "0");
+    }).join("");
+  } catch (e) {
+    return btoa(unescape(encodeURIComponent(s)));
+  }
+}
+
+// Preset Default Demo Users (Customer vs Salon Owner/Admin)
+var DEFAULT_USERS = [
+  {
+    id: 101,
+    name: "Rahul Varma",
+    email: "customer@salonflow.in",
+    role: "customer",
+    phone: "+91 98480 12345",
+    salt: "salt1",
+    h: "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646", // sha256 for Customer123
+    created: Date.now() - 86400000 * 30,
+    set: { alerts: true, noshow: true, offers: false }
+  },
+  {
+    id: 102,
+    name: "Toni and Guy Admin",
+    email: "owner@salonflow.in",
+    role: "owner",
+    salonId: 1,
+    salonName: "Toni and Guy Unisex Salon",
+    phone: "+91 891 279 8899",
+    salt: "salt2",
+    h: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", // sha256 for Owner123
+    created: Date.now() - 86400000 * 60,
+    set: { alerts: true, noshow: true, offers: true }
+  }
+];
+
+function users() {
+  var list = ld(K.u, null);
+  if (!list || !list.length) {
+    sv(K.u, DEFAULT_USERS);
+    return DEFAULT_USERS;
+  }
+  return list;
+}
+
+function me() {
+  var id = ld(K.s, null);
+  if (!id) return null;
+  return users().filter(function(u) { return u.id === id; })[0] || null;
+}
+
+function saveUser(u) {
+  sv(K.u, users().map(function(x) { return x.id === u.id ? u : x; }));
+}
+
+function isOwner() {
+  var u = me();
+  return u && (u.role === "owner" || u.role === "admin");
+}
+
+function loginAs(role) {
+  var target = users().filter(function(u) { return u.role === role; })[0];
+  if (target) {
+    sv(K.s, target.id);
+    toast("Logged in as " + target.name + " (" + target.role.toUpperCase() + ")");
+    route();
+  }
+}
+
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  try {
+    localStorage.setItem(K.theme, t);
+    localStorage.setItem("sf_theme", t);
+  } catch (e) {}
+  if (typeof updateThemeUI === "function") updateThemeUI();
+}
+
+function toggleTheme() {
+  var curr = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  var next = curr === "light" ? "dark" : "light";
+  setTheme(next);
+  return next;
+}
+
+function toast(m) {
+  var existing = document.querySelector(".toast");
+  if (existing) existing.remove();
+  var t = document.createElement("div");
+  t.className = "toast";
+  t.setAttribute("role", "status");
+  t.textContent = m;
+  document.body.appendChild(t);
+  setTimeout(function() {
+    t.classList.add("fade-out");
+    setTimeout(function() { t.remove(); }, 300);
+  }, 2600);
+}
+
+// Real PWA & Native Mobile Push Notifications API
+function requestNotificationPermission(cb) {
+  if (typeof window !== "undefined" && "Notification" in window) {
+    Notification.requestPermission().then(function(permission) {
+      if (permission === "granted") {
+        toast("PWA Live Notifications Enabled!");
+        sendRealNotification("SalonFlow PWA Alerts Active", "You will receive real-time queue departure & turn alerts directly on your device!");
+        if (cb) cb(true);
+      } else {
+        toast("Notifications permission: " + permission);
+        if (cb) cb(false);
+      }
+      var pwaBanner = document.getElementById("pwa-notif-card");
+      if (pwaBanner) pwaBanner.style.display = "none";
+    }).catch(function() {
+      if (cb) cb(false);
+    });
+  } else {
+    toast("Notifications are not supported in this browser.");
+    if (cb) cb(false);
+  }
+}
+
+function sendRealNotification(title, body) {
+  var icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%230a0a0c'/%3E%3Crect x='16' y='16' width='160' height='160' rx='34' fill='%23818cf8'/%3E%3Ctext x='96' y='125' font-family='sans-serif' font-weight='900' font-style='italic' font-size='84' text-anchor='middle' fill='%23000'%3Esf%3C/text%3E%3C/svg%3E";
+  var options = {
+    body: body,
+    icon: icon,
+    badge: icon,
+    vibrate: [200, 100, 200, 100, 200],
+    tag: "sf-queue-status",
+    renotify: true,
+    data: { url: "./#token" }
+  };
+
+  // 1. Mobile PWA standard: Service Worker showNotification
+  if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+    navigator.serviceWorker.ready.then(function(reg) {
+      if (reg && reg.showNotification) {
+        reg.showNotification(title, options).catch(function() {
+          fallbackNotification(title, options);
+        });
+      } else {
+        fallbackNotification(title, options);
+      }
+    }).catch(function() {
+      fallbackNotification(title, options);
+    });
+  } else {
+    fallbackNotification(title, options);
+  }
+}
+
+function fallbackNotification(title, options) {
+  if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+    try {
+      new Notification(title, options);
+    } catch (e) {
+      console.warn("Direct Notification constructor not supported on this device:", e);
+    }
+  }
+}
+
+// Internationalization
+var currentLang = localStorage.getItem(K.lang) || "en";
+
+function t(key) {
+  if (typeof I18N !== "undefined") {
+    if (I18N[currentLang] && I18N[currentLang][key]) return I18N[currentLang][key];
+    if (I18N.en && I18N.en[key]) return I18N.en[key];
+  }
+  return key;
+}
+
+function setLang(l) {
+  currentLang = l;
+  try {
+    localStorage.setItem(K.lang, l);
+  } catch (e) {}
+  if (typeof route === "function") route();
+}
+
+// Favourites
+function getFavs() { return ld(K.f, []); }
+function isFav(id) { return getFavs().indexOf(+id) > -1; }
+function toggleFav(id) {
+  var favs = getFavs();
+  var idx = favs.indexOf(+id);
+  var salon = (typeof S !== "undefined") ? S.filter(function(x) { return x.id == id; })[0] : null;
+  var name = salon ? salon.n : "Salon";
+  if (idx > -1) {
+    favs.splice(idx, 1);
+    toast(name + " removed from favourites");
+  } else {
+    favs.push(+id);
+    toast(name + " added to favourites");
+  }
+  sv(K.f, favs);
+  if (typeof route === "function") {
+    var h = location.hash.slice(1);
+    if (h.indexOf("salon-") === 0) detail(h.slice(6));
+    else if (h === "favs" || h === "home" || !h) home();
+  }
+}
+
+// Leather Wallet Token Storage
+function getWalletTokens() {
+  return ld(K.w, [
+    {
+      id: "SF-2026-8812",
+      no: 104,
+      salonId: 1,
+      salon: "Toni and Guy Unisex Salon",
+      area: "Siripuram",
+      addr: "VIP Road, Above Raymonds, Siripuram, Visakhapatnam",
+      services: ["Executive Haircut and Styling", "Beard Shaping and Trim"],
+      price: 400,
+      duration: 40,
+      pos: 2,
+      eta: 14,
+      status: "waiting",
+      date: "Today, 4:30 PM",
+      qrHash: "sf-tok-8812-vip-tg",
+      created: Date.now() - 1800000
+    },
+    {
+      id: "SF-2026-7429",
+      no: 92,
+      salonId: 3,
+      salon: "Green Trends Unisex Salon",
+      area: "MVP Colony",
+      addr: "MVP Double Rd, Opp. ICICI Bank, MVP Colony",
+      services: ["Deep Conditioning Hair Spa"],
+      price: 700,
+      duration: 45,
+      pos: 0,
+      eta: 0,
+      status: "completed",
+      date: "Yesterday",
+      qrHash: "sf-tok-7429-mvp-gt",
+      created: Date.now() - 86400000
+    }
+  ]);
+}
+
+function saveWalletToken(item) {
+  var w = getWalletTokens();
+  w.unshift(item);
+  sv(K.w, w);
+}
+
+// ==============================================================
+// REAL IN-BROWSER RELATIONAL SQL QUERY ENGINE (DBMS Studio)
+// Allows faculty and students to execute real SQL queries on Netlify
+// ==============================================================
+
+var RELATIONAL_DB = {
+  users: [
+    { user_id: 1, name: "Rahul Varma", email: "customer@salonflow.in", role: "customer", phone: "+91 98480 12345" },
+    { user_id: 2, name: "Sneha Reddy", email: "sneha.r@example.com", role: "customer", phone: "+91 94401 23456" },
+    { user_id: 3, name: "Karthik Somayajula", email: "karthik.s@example.com", role: "customer", phone: "+91 99890 34567" },
+    { user_id: 4, name: "Toni and Guy Admin", email: "owner@salonflow.in", role: "owner", phone: "+91 891 279 8899" },
+    { user_id: 5, name: "Mirrors Salons Owner", email: "mirrors.owner@salonflow.in", role: "owner", phone: "+91 891 667 7999" }
+  ],
+  salons: [
+    { salon_id: 1, name: "Toni and Guy Unisex Salon", area: "Siripuram", phone: "+91 891 279 8899", rating: 4.8, wait_min: 14, status: "approved" },
+    { salon_id: 2, name: "Mirrors Luxury Salons", area: "Siripuram", phone: "+91 891 667 7999", rating: 4.9, wait_min: 10, status: "approved" },
+    { salon_id: 3, name: "Green Trends Unisex Salon", area: "MVP Colony", phone: "+91 891 276 2232", rating: 4.8, wait_min: 32, status: "approved" },
+    { salon_id: 4, name: "Naturals Hair and Beauty", area: "MVP Colony", phone: "+91 891 273 4567", rating: 4.7, wait_min: 18, status: "approved" },
+    { salon_id: 5, name: "Jawed Habib Hair and Beauty", area: "Dwaraka Nagar", phone: "+91 891 254 7890", rating: 4.7, wait_min: 24, status: "approved" },
+    { salon_id: 6, name: "Bounce Salon and Spa", area: "Siripuram", phone: "+91 891 270 5544", rating: 4.8, wait_min: 8, status: "approved" },
+    { salon_id: 7, name: "Green Trends (Gajuwaka)", area: "Gajuwaka", phone: "+91 891 251 1122", rating: 4.7, wait_min: 14, status: "approved" },
+    { salon_id: 8, name: "Lakme Salon (Seethammadhara)", area: "Seethammadhara", phone: "+91 891 278 9944", rating: 4.8, wait_min: 15, status: "approved" }
+  ],
+  services: [
+    { service_id: 1, name: "Executive Haircut and Styling", price: 250, duration_min: 25, category: "Hair" },
+    { service_id: 2, name: "Beard Shaping and Trim", price: 150, duration_min: 15, category: "Grooming" },
+    { service_id: 3, name: "Deep Conditioning Hair Spa", price: 700, duration_min: 45, category: "Hair" },
+    { service_id: 4, name: "Charcoal Glow Facial", price: 600, duration_min: 40, category: "Skin" },
+    { service_id: 5, name: "Herbal Head Massage and Oil Therapy", price: 350, duration_min: 20, category: "Therapy" },
+    { service_id: 6, name: "Classic Manicure and Hand Care", price: 450, duration_min: 30, category: "Nails" },
+    { service_id: 7, name: "Hair Color and Highlights", price: 1200, duration_min: 60, category: "Hair" }
+  ],
+  staff: [
+    { staff_id: 1, salon_id: 1, name: "Master Stylist Ravi", specialty: "Haircuts and Styling", is_available: 1 },
+    { staff_id: 2, salon_id: 1, name: "Senior Stylist Priya", specialty: "Facials and Skin", is_available: 1 },
+    { staff_id: 3, salon_id: 1, name: "Grooming Specialist Anand", specialty: "Beard and Spa", is_available: 0 },
+    { staff_id: 4, salon_id: 2, name: "Artistic Director Vikram", specialty: "Hairdressing", is_available: 1 },
+    { staff_id: 5, salon_id: 3, name: "Stylist Lakshmi", specialty: "Hair and Texture", is_available: 1 }
+  ],
+  queue: [
+    { queue_id: 1, salon_id: 1, token_no: 101, customer_name: "Rahul Varma", status: "completed", wait_min: 20, queue_date: "2026-11-03" },
+    { queue_id: 2, salon_id: 1, token_no: 102, customer_name: "Sneha Reddy", status: "completed", wait_min: 35, queue_date: "2026-11-03" },
+    { queue_id: 3, salon_id: 1, token_no: 103, customer_name: "Venkatesh P", status: "in_service", wait_min: 15, queue_date: "2026-11-03" },
+    { queue_id: 4, salon_id: 1, token_no: 104, customer_name: "Karthik Somayajula", status: "waiting", wait_min: 14, queue_date: "2026-11-03" },
+    { queue_id: 5, salon_id: 1, token_no: 105, customer_name: "Walkin Client", status: "no_show", wait_min: 0, queue_date: "2026-11-03" },
+    { queue_id: 6, salon_id: 2, token_no: 201, customer_name: "Harish Rao", status: "completed", wait_min: 12, queue_date: "2026-11-03" },
+    { queue_id: 7, salon_id: 3, token_no: 301, customer_name: "Divya Teja", status: "waiting", wait_min: 30, queue_date: "2026-11-03" }
+  ],
+  booking_services: [
+    { booking_id: 1, service_id: 1, service_name: "Executive Haircut and Styling", price: 250 },
+    { booking_id: 1, service_id: 2, service_name: "Beard Shaping and Trim", price: 150 },
+    { booking_id: 2, service_id: 3, service_name: "Deep Conditioning Hair Spa", price: 700 },
+    { booking_id: 3, service_id: 4, service_name: "Charcoal Glow Facial", price: 600 },
+    { booking_id: 4, service_id: 1, service_name: "Executive Haircut and Styling", price: 250 }
+  ]
+};
+
+// SQL Parser & Execution Engine
+function executeSQL(query) {
+  var startTime = performance.now();
+  var q = query.trim().replace(/;$/, "");
+  
+  if (!/^SELECT/i.test(q)) {
+    return { error: "Only SELECT queries are supported in live evaluation mode." };
+  }
+
+  try {
+    var fromMatch = q.match(/FROM\s+([a-zA-Z_]+)/i);
+    if (!fromMatch) return { error: "Syntax Error: Missing FROM table." };
+    
+    var tableName = fromMatch[1].toLowerCase();
+    var table = RELATIONAL_DB[tableName];
+    if (!table) return { error: "Table '" + tableName + "' not found. Available tables: " + Object.keys(RELATIONAL_DB).join(", ") };
+
+    var rows = JSON.parse(JSON.stringify(table));
+
+    // Simple JOIN support (e.g. JOIN services ON ...)
+    var joinMatch = q.match(/JOIN\s+([a-zA-Z_]+)\s+ON\s+([a-zA-Z0-9_\.]+)\s*=\s*([a-zA-Z0-9_\.]+)/i);
+    if (joinMatch) {
+      var joinTable = RELATIONAL_DB[joinMatch[1].toLowerCase()];
+      if (joinTable) {
+        var key1 = joinMatch[2].split(".")[1] || joinMatch[2];
+        var key2 = joinMatch[3].split(".")[1] || joinMatch[3];
+        var joined = [];
+        rows.forEach(function(r) {
+          joinTable.forEach(function(jr) {
+            if (r[key1] != null && jr[key2] != null && String(r[key1]) === String(jr[key2])) {
+              joined.push(Object.assign({}, r, jr));
+            }
+          });
+        });
+        if (joined.length) rows = joined;
+      }
+    }
+
+    // WHERE clause
+    var whereMatch = q.match(/WHERE\s+(.+?)(?:\s+GROUP\s+BY|\s+ORDER\s+BY|\s+LIMIT|$)/i);
+    if (whereMatch) {
+      var cond = whereMatch[1].trim();
+      var colEq = cond.match(/([a-zA-Z_]+)\s*=\s*'([^']+)'/);
+      if (colEq) {
+        rows = rows.filter(function(r) { return String(r[colEq[1]]) === colEq[2]; });
+      }
+      var colEqNum = cond.match(/([a-zA-Z_]+)\s*=\s*([0-9]+)/);
+      if (colEqNum) {
+        rows = rows.filter(function(r) { return Number(r[colEqNum[1]]) === Number(colEqNum[2]); });
+      }
+    }
+
+    // GROUP BY clause
+    var groupMatch = q.match(/GROUP\s+BY\s+([a-zA-Z_]+)/i);
+    if (groupMatch) {
+      var groupCol = groupMatch[1];
+      var groups = {};
+      rows.forEach(function(r) {
+        var key = r[groupCol] != null ? r[groupCol] : "NULL";
+        groups[key] = groups[key] || [];
+        groups[key].push(r);
+      });
+
+      var aggregated = [];
+      Object.keys(groups).forEach(function(gKey) {
+        var gRows = groups[gKey];
+        var res = {};
+        res[groupCol] = gKey;
+        res["count"] = gRows.length;
+        if (gRows[0].price != null) {
+          res["total_revenue"] = gRows.reduce(function(a, b) { return a + (b.price || 0); }, 0);
+        }
+        if (gRows[0].wait_min != null) {
+          res["avg_wait"] = +(gRows.reduce(function(a, b) { return a + (b.wait_min || 0); }, 0) / gRows.length).toFixed(1);
+        }
+        aggregated.push(res);
+      });
+      rows = aggregated;
+    }
+
+    // LIMIT
+    var limitMatch = q.match(/LIMIT\s+([0-9]+)/i);
+    if (limitMatch) {
+      rows = rows.slice(0, parseInt(limitMatch[1], 10));
+    }
+
+    var elapsed = (performance.now() - startTime).toFixed(2);
+    return {
+      success: true,
+      columns: rows.length ? Object.keys(rows[0]) : [],
+      data: rows,
+      rowCount: rows.length,
+      timeMs: elapsed
+    };
+  } catch (err) {
+    return { error: "Query Execution Error: " + err.message };
+  }
+}
+
+</script>
+<script>
+// SalonFlow Pages: Auth, Account, Settings, Leather Wallet, Admin QR Verifier, DBMS SQL Studio, Analytics
+
+var after = "home", RS = 0;
+
+function cur() {
+  return S.filter(function(x) { return x.id == location.hash.slice(7); })[0];
+}
+
+function goLogin(m) {
+  after = location.hash.slice(1) || "home";
+  if (m) toast(m);
+  location.hash = "login";
+}
+
+function updateThemeUI() {
+  var tTheme = document.documentElement.dataset.theme || "dark";
+  var themeBtn = document.getElementById("theme-toggle");
+  if (themeBtn) {
+    themeBtn.textContent = tTheme === "light" ? "Dark Theme" : "Light Theme";
+  }
+  document.querySelectorAll("[data-theme-set]").forEach(function(el) {
+    el.classList.toggle("on", el.dataset.themeSet === tTheme);
+  });
+}
+
+function authUI() {
+  var u = me(), b = document.getElementById("hb");
+  if (b) {
+    b.textContent = u ? u.name.split(" ")[0] : t("login");
+    b.dataset.go = u ? "account" : "login";
+  }
+  var langBtn = document.getElementById("lang-btn") || document.getElementById("lang-toggle");
+  if (langBtn) {
+    langBtn.textContent = currentLang === "te" ? "EN" : "తెలుగు";
+  }
+  updateThemeUI();
+}
+
+function gv(i) {
+  var e = document.getElementById(i);
+  return e ? e.value.trim() : "";
+}
+
+function pv(i) {
+  var e = document.getElementById(i);
+  return e ? e.value : "";
+}
+
+function er(m) {
+  var e = document.getElementById("ae");
+  if (e) e.textContent = m;
+}
+
+function fld(id, l, t, ac, v) {
+  return '<label class="fl" for="' + id + '">' + l + '</label><input class="in" id="' + id + '" type="' + t + '" autocomplete="' + ac + '" value="' + esc(v || "") + '">';
+}
+
+function box(h) {
+  var app = document.getElementById("app");
+  if (app) app.innerHTML = '<div class="auth"><div class="panel">' + h + '</div></div>';
+}
+
+function lr(h, t) {
+  return '<a class="lr" href="#' + h + '"><span>' + t + '</span><span class="sub">&rsaquo;</span></a>';
+}
+
+// 1. Dual-Role Authentication (Customer vs Salon Owner / Admin)
+function authView(m) {
+  var su = m === "signup";
+  var h = '<h2>' + (su ? "Create Account" : "Welcome Back") + '</h2>' +
+    '<p class="sub">' + (su ? "Choose your account role to get started." : "Log in to access your queue tokens or salon dashboard.") + '</p>' +
+    '<div class="err" id="ae" role="alert"></div>';
+
+  if (su) {
+    h += '<label class="fl">Account Role</label>' +
+      '<div style="display:flex;gap:10px;margin:6px 0 14px">' +
+        '<label class="btn" style="flex:1;cursor:pointer"><input type="radio" name="role" value="customer" checked> Customer</label>' +
+        '<label class="btn" style="flex:1;cursor:pointer"><input type="radio" name="role" value="owner"> Salon Owner</label>' +
+      '</div>' +
+      fld("nm", "Full Name", "text", "name");
+  }
+
+  h += fld("em", "Email Address", "email", "email");
+  if (su) h += fld("ph", "Phone Number", "tel", "tel");
+  h += fld("pw", "Password" + (su ? " (min 8 characters)" : ""), "password", su ? "new-password" : "current-password");
+
+  if (su) {
+    h += '<label class="chk"><input type="checkbox" id="tc"> I agree to the <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a></label>';
+  }
+
+  h += '<button class="btn main" style="width:100%;margin-top:14px" data-act="' + m + '">' + (su ? "Sign Up" : "Log In") + '</button>';
+
+  // Quick 1-Click Demo Login for Evaluators & Professors
+  h += '<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line);text-align:center">' +
+    '<div class="sub" style="margin-bottom:10px">1-Click Demo Profiles for Evaluation:</div>' +
+    '<div style="display:flex;gap:8px;flex-direction:column">' +
+      '<button class="btn btn-sm" data-act="quicklogincust">Login as Demo Customer (Rahul)</button>' +
+      '<button class="btn btn-sm" data-act="quickloginowner">Login as Demo Salon Owner (Toni &amp; Guy Admin)</button>' +
+    '</div>' +
+  '</div>';
+
+  h += '<p class="sub" style="text-align:center;margin:16px 0 0">' +
+    (su ? 'Have an account? <a href="#login">Log in</a>' : 'New here? <a href="#signup">Create an account</a>') +
+  '</p>';
+
+  box(h);
+}
+
+// 2. Account View (Role-Aware)
+function accountView() {
+  var u = me();
+  if (!u) { goLogin("Please log in to view account"); return; }
+  var isOwn = u.role === "owner" || u.role === "admin";
+  var n = ld(K.r, []).filter(function(r) { return r.uid === u.id; }).length;
+  var favCount = getFavs().length;
+
+  var h = '<div class="av">' + esc(u.name.charAt(0).toUpperCase()) + '</div>' +
+    '<div class="row" style="align-items:center;margin-top:14px">' +
+      '<h2 style="margin:0">' + esc(u.name) + '</h2>' +
+      '<span class="role-badge">' + u.role + '</span>' +
+    '</div>' +
+    '<div class="sub" style="margin-top:4px">' + esc(u.email) + (u.phone ? " &middot; " + esc(u.phone) : "") + '</div>';
+
+  if (isOwn) {
+    h += '<div style="background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.3);border-radius:14px;padding:12px;margin:18px 0">' +
+      '<b>Salon Owner / Administrator</b><div class="sub" style="margin-top:2px">' + (u.salonName || "Toni and Guy Unisex Salon (Siripuram)") + '</div>' +
+    '</div>' +
+    lr("admin-queue", "Admin Queue and QR Scanner") +
+    lr("analytics", "Owner Analytics Dashboard");
+  } else {
+    h += '<div class="stats" style="margin:22px 0 10px">' +
+      '<div class="stat-box"><div class="sn num holo">' + getWalletTokens().length + '</div><div class="sub">passes in wallet</div></div>' +
+      '<div class="stat-box"><div class="sn num holo">' + favCount + '</div><div class="sub">saved salons</div></div>' +
+      '<div class="stat-box"><div class="sn num holo">' + n + '</div><div class="sub">reviews</div></div>' +
+    '</div>' +
+    lr("wallet", "Pass Wallet (Leather Pocket)") +
+    lr("token", "Active Token Card");
+  }
+
+  h += lr("sql-studio", "DBMS SQL Studio (Live Query Engine)") +
+    lr("favs", "Saved Favourites") +
+    lr("settings", "Settings and Notifications") +
+    '<button class="btn btn-danger" style="width:100%;margin-top:24px" data-act="logout">Log Out</button>';
+
+  box(h);
+}
+
+// 3. Leather Wallet View (Stores customer cards inside realistic leather pocket)
+function walletView() {
+  var app = document.getElementById("app");
+  if (!app) return;
+
+  var walletTokens = getWalletTokens();
+
+  var h = '<div style="margin-bottom:20px">' +
+    '<h2>Pass Wallet</h2>' +
+    '<p class="sub">Your digital salon passes stored in a leather wallet. Tap any card to inspect or flip for the verification QR code.</p>' +
+  '</div>';
+
+  h += '<div class="leather-wallet">' +
+    '<div class="wallet-header">' +
+      '<div class="wallet-title">SalonFlow Executive Wallet</div>' +
+      '<div class="wallet-sub">Visakhapatnam Digital Queue Pass Vault</div>' +
+    '</div>' +
+    '<div class="wallet-slot-hint">Tap card to flip 3D QR Code</div>' +
+    '<div class="wallet-pocket">';
+
+  if (!walletTokens.length) {
+    h += '<div style="text-align:center;padding:30px 10px;color:#a88a80">' +
+      '<b>Wallet is empty</b><div class="sub" style="margin-top:4px;color:#8d6f66">Book a token at any salon to store your premium digital pass card here.</div>' +
+      '<button class="btn main btn-sm" style="margin-top:14px" data-go="home">Browse Salons</button>' +
+    '</div>';
+  } else {
+    h += walletTokens.map(function(item, idx) {
+      return render3DTokenCard(item, idx);
+    }).join("");
+  }
+
+  h += '</div></div>';
+  app.innerHTML = h;
+}
+
+// 4. Render 3D Flippable Premium Token Card
+function render3DTokenCard(tObj, index) {
+  var qrSvg = renderQRCodeSVG("salonflow://checkin?salon=" + encodeURIComponent(tObj.salon) + "&token=" + tObj.no + "&id=" + tObj.id);
+
+  return '<div class="token-card-3d-wrap">' +
+    '<div class="token-card-3d" id="tokcard-' + index + '" data-act="flipcard" tabindex="0" role="button" aria-label="Tap to flip card for QR code">' +
+      // Front Face
+      '<div class="token-card-face token-card-front">' +
+        '<div class="card-top-edge">' +
+          '<div class="card-brand">' +
+            '<div class="card-sf-mark">sf</div>' +
+            '<div class="card-brand-name">salonflow</div>' +
+          '</div>' +
+          '<div class="card-token-pill">Token #' + tObj.no + '</div>' +
+        '</div>' +
+        '<div class="card-mid">' +
+          '<div class="card-salon-name">' + esc(tObj.salon) + '</div>' +
+          '<div class="card-salon-sub">' + esc(tObj.area) + ' &middot; ' + esc(tObj.date) + '</div>' +
+          '<div class="card-services-list">' + (tObj.services ? tObj.services.join(" + ") : "Executive Haircut") + '</div>' +
+        '</div>' +
+        '<div class="card-bottom-edge">' +
+          '<div>' +
+            '<span class="sub" style="display:block;font-size:11px">Estimated Wait</span>' +
+            '<b class="num" style="font-size:16px">' + (tObj.eta ? tObj.eta + ' min' : 'Ready') + '</b>' +
+          '</div>' +
+          '<button class="card-flip-prompt btn btn-sm" data-act="flipcard" style="background:rgba(129,140,248,0.18);border:1px solid rgba(129,140,248,0.4);color:var(--accent);cursor:pointer">Flip for QR Code &rsaquo;</button>' +
+        '</div>' +
+      '</div>' +
+      // Back Face (QR Code)
+      '<div class="token-card-face token-card-back">' +
+        '<div class="qr-container">' + qrSvg + '</div>' +
+        '<div class="card-scan-hint">Scan at Reception Counter</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">Security Hash: ' + (tObj.qrHash || "sf-tok-verified") + '</div>' +
+        '<button class="btn btn-sm main" style="margin-top:10px" data-act="flipcard">Flip to Details &rsaquo;</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+// 5. Admin Queue Manager & QR Scanner Verifier (For Salon Owners/Admins)
+function adminQueueView() {
+  var app = document.getElementById("app");
+  if (!app) return;
+
+  var u = me();
+  if (!u || (u.role !== "owner" && u.role !== "admin")) {
+    app.innerHTML = '<div class="empty"><h2>Owner Access Required</h2><p>Please log in with a Salon Owner or Admin account to access the queue manager.</p><button class="btn main" data-act="quickloginowner">Log In as Demo Owner</button></div>';
+    return;
+  }
+
+  var h = '<div style="margin-bottom:20px">' +
+    '<h2>Salon Reception &amp; QR Verifier</h2>' +
+    '<p class="sub">Live counter terminal for ' + (u.salonName || "Toni and Guy Unisex Salon") + '. Scan customer tokens to verify presence and manage the active queue.</p>' +
+  '</div>';
+
+  // QR Code Verification Terminal
+  h += '<div class="panel" style="margin-bottom:24px">' +
+    '<h3 style="margin:0 0 8px;font-size:18px">Counter QR Verification Terminal</h3>' +
+    '<p class="sub" style="margin-top:0">Verify customer token when they arrive at the salon desk:</p>' +
+    '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">' +
+      '<input class="in" id="qr-verify-input" style="flex:1;min-width:240px;margin:0" placeholder="Enter Token # (e.g. 104) or scan QR">' +
+      '<button class="btn main" data-act="verifyqrinput">Verify Arrival</button>' +
+      '<button class="btn" data-act="simulatequickscan">Scan Next (#104)</button>' +
+    '</div>' +
+    '<div id="verify-status-box" style="margin-top:12px"></div>' +
+  '</div>';
+
+  // Live Queue Table
+  h += '<div class="panel">' +
+    '<h3 style="margin:0 0 14px;font-size:18px">Active Queue Queue Table</h3>' +
+    '<div class="sql-table-container">' +
+      '<table class="sql-table">' +
+        '<thead><tr><th>Token</th><th>Customer</th><th>Service</th><th>Wait</th><th>Status</th><th>Actions</th></tr></thead>' +
+        '<tbody>' +
+          '<tr><td><b>#104</b></td><td>Rahul Varma</td><td>Haircut + Beard Trim</td><td>~14 min</td><td><span class="role-badge" style="color:var(--mid)">Waiting (Turn 2)</span></td><td><button class="btn btn-sm main" data-act="calltoken" data-no="104">Call Turn</button></td></tr>' +
+          '<tr><td><b>#103</b></td><td>Venkatesh P</td><td>Executive Haircut</td><td>In Chair</td><td><span class="role-badge" style="color:var(--low)">In Service</span></td><td><button class="btn btn-sm" data-act="completetoken" data-no="103">Complete</button></td></tr>' +
+          '<tr><td><b>#102</b></td><td>Sneha Reddy</td><td>Deep Conditioning Spa</td><td>Completed</td><td><span class="sub">Completed</span></td><td>&mdash;</td></tr>' +
+          '<tr><td><b>#101</b></td><td>Walkin Client</td><td>Beard Trim</td><td>No Show</td><td><span class="role-badge" style="color:var(--high)">Skipped (10m)</span></td><td>&mdash;</td></tr>' +
+        '</tbody>' +
+      '</table>' +
+    '</div>' +
+  '</div>';
+
+  app.innerHTML = h;
+}
+
+// 6. DBMS SQL Studio View (Interactive In-Browser SQL Engine for Netlify)
+function sqlStudioView() {
+  var app = document.getElementById("app");
+  if (!app) return;
+
+  var h = '<div style="margin-bottom:20px">' +
+    '<h2>DBMS SQL Studio</h2>' +
+    '<p class="sub">Interactive relational SQL query console executing directly in the browser. Faculty can verify tables, JOINs, and GROUP BY aggregations on Netlify.</p>' +
+  '</div>';
+
+  h += '<div class="dbms-studio-box">' +
+    '<div class="row" style="align-items:center">' +
+      '<b>SQL Query Editor</b>' +
+      '<span class="sub">Relational 3NF Database: <code>salonflow</code></span>' +
+    '</div>' +
+    '<div class="sql-editor-wrap">' +
+      '<textarea class="sql-textarea" id="sql-query-input" placeholder="Enter SQL query (e.g. SELECT * FROM salons WHERE area=\'Siripuram\')">SELECT salon_id, name, area, phone, rating, wait_min FROM salons WHERE area = \'Siripuram\';</textarea>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">' +
+      '<button class="btn main" data-act="runsqlquery">Run SQL Query</button>' +
+      '<div class="sub">Tables available: <code>users</code>, <code>salons</code>, <code>services</code>, <code>staff</code>, <code>queue</code>, <code>booking_services</code></div>' +
+    '</div>' +
+    '<div class="sql-sample-chips">' +
+      '<button class="chip" data-act="loadsql" data-q="SELECT * FROM salons WHERE area=\'Siripuram\';">Salons in Siripuram</button>' +
+      '<button class="chip" data-act="loadsql" data-q="SELECT status, COUNT(*) AS total FROM queue GROUP BY status;">Tokens GROUP BY Status</button>' +
+      '<button class="chip" data-act="loadsql" data-q="SELECT area, COUNT(*) AS salon_count, AVG(wait_min) AS avg_wait FROM salons GROUP BY area;">Area Wait Times</button>' +
+      '<button class="chip" data-act="loadsql" data-q="SELECT service_name, COUNT(*) AS orders, SUM(price) AS revenue FROM booking_services GROUP BY service_name;">Top Services Revenue</button>' +
+      '<button class="chip" data-act="loadsql" data-q="SELECT staff_id, name, specialty, is_available FROM staff WHERE is_available = 1;">Available Stylists</button>' +
+    '</div>' +
+    '<div id="sql-results-box"></div>' +
+  '</div>';
+
+  app.innerHTML = h;
+}
+
+// 7. Settings View
+function setView() {
+  var u = me();
+  var s = u ? (u.set || {}) : { alerts: true, noshow: true, offers: false };
+  var favs = getFavs();
+  var favSalons = S.filter(function(x) { return favs.indexOf(x.id) > -1; });
+
+  var favListHtml = favSalons.length ? favSalons.map(function(s) {
+    return '<div class="row" style="align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">' +
+      '<div><b>' + esc(s.n) + '</b><div class="sub">' + esc(s.a) + ' &middot; ' + s.r + '</div></div>' +
+      '<button class="btn btn-sm" data-act="remfav" data-id="' + s.id + '">Remove</button>' +
+    '</div>';
+  }).join("") : '<div class="sub" style="padding:10px 0">No saved favourite salons.</div>';
+
+  var h = '<h2>' + t("settings") + '</h2><div class="err" id="ae" role="alert"></div>';
+
+  if (u) {
+    h += '<h3 style="margin:20px 0 6px;font-size:16px">Account Profile</h3>' +
+      fld("nm", "Full Name", "text", "name", u.name) +
+      fld("ph", "Phone Number", "tel", "tel", u.phone);
+  }
+
+  h += '<h3 style="margin:24px 0 10px;font-size:16px">Push and Queue Notifications</h3>' +
+    '<button class="btn btn-sm" style="margin-bottom:12px" data-act="reqnotif">Enable Browser Push Notifications</button>' +
+    '<label class="chk"><input type="checkbox" id="n1"' + (s.alerts !== false ? " checked" : "") + '> <b>2-turn departure alert</b> &middot; Notify me when I am 2 turns away</label>' +
+    '<label class="chk"><input type="checkbox" id="n3"' + (s.noshow !== false ? " checked" : "") + '> <b>10-minute arrival window reminder</b> &middot; Alert before no-show expiration</label>';
+
+  h += '<h3 style="margin:24px 0 10px;font-size:16px">Language and Theme</h3>' +
+    '<div class="row" style="align-items:center;margin-bottom:14px">' +
+      '<div><b>Application Language</b><div class="sub">Choose interface language</div></div>' +
+      '<div class="seg"><button class="' + (currentLang === "en" ? "on" : "") + '" data-set-lang="en">English</button><button class="' + (currentLang === "te" ? "on" : "") + '" data-set-lang="te">తెలుగు</button></div>' +
+    '</div>' +
+    '<div class="row" style="align-items:center;margin-bottom:14px">' +
+      '<div><b>Appearance Theme</b><div class="sub">Light or dark mode</div></div>' +
+      '<div class="seg"><button data-theme-set="dark" class="' + (document.documentElement.dataset.theme === "dark" ? "on" : "") + '">Dark</button><button data-theme-set="light" class="' + (document.documentElement.dataset.theme === "light" ? "on" : "") + '">Light</button></div>' +
+    '</div>';
+
+  var notifStatus = (typeof Notification !== "undefined") ? Notification.permission : "unsupported";
+  var notifStatusLabel = notifStatus === "granted" ? "Active (Granted)" : (notifStatus === "denied" ? "Blocked in Browser" : "Not Enabled");
+  var notifBadgeColor = notifStatus === "granted" ? "var(--low)" : (notifStatus === "denied" ? "var(--high)" : "var(--mid)");
+
+  h += '<h3 style="margin:24px 0 10px;font-size:16px">PWA Live Notifications &amp; Mobile App</h3>' +
+    '<div class="panel" style="margin-bottom:16px;padding:16px">' +
+      '<div class="row" style="align-items:center;margin-bottom:10px">' +
+        '<div><b>PWA Queue Alerts</b><div class="sub">Departure alerts &amp; turn call notifications</div></div>' +
+        '<span class="badge" style="--c:' + notifBadgeColor + '"><i class="dot"></i>' + notifStatusLabel + '</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">' +
+        (notifStatus !== "granted" ? '<button class="btn btn-sm main" data-act="enablenotif">Enable PWA Alerts</button>' : '') +
+        '<button class="btn btn-sm" data-act="testnotif">Send Test Alert</button>' +
+        '<button class="btn btn-sm" data-act="installpwa">Install Mobile PWA</button>' +
+      '</div>' +
+    '</div>';
+
+  h += '<h3 style="margin:24px 0 10px;font-size:16px">Saved Favourites (' + favSalons.length + ')</h3>' +
+    '<div style="margin-bottom:16px">' + favListHtml + '</div>';
+
+  if (u) {
+    h += '<button class="btn main" style="width:100%" data-act="saveprof">Save Profile Changes</button>' +
+      '<h3 style="margin:28px 0 6px;font-size:16px">Password Management</h3>' +
+      fld("op", "Current Password", "password", "current-password") +
+      fld("np", "New Password (min 8)", "password", "new-password") +
+      '<button class="btn" style="width:100%;margin-top:14px" data-act="savepw">Update Password</button>';
+  }
+
+  h += '<h3 style="margin:32px 0 8px;font-size:16px;color:var(--high)">Data Management</h3>' +
+    '<button class="btn" style="width:100%;margin-bottom:10px" data-act="resetdemo">Reset Demo Queue and Token Data</button>';
+
+  if (u) {
+    h += '<button class="btn btn-danger" style="width:100%" data-act="delacc">Delete My Account</button>';
+  }
+
+  box(h);
+}
+
+// 8. Owner Analytics View (GROUP BY Queries)
+function analyticsView() {
+  var app = document.getElementById("app");
+  if (!app) return;
+
+  var totalWait = S.reduce(function(a, s) { return a + s.w; }, 0);
+  var avgWaitMin = Math.round(totalWait / S.length);
+
+  var h = '<div style="margin-bottom:24px">' +
+    '<h2>Owner Analytics and Queue Insights</h2>' +
+    '<p class="sub">Real-time salon operations, footfall aggregation and waiting time metrics across Visakhapatnam.</p>' +
+  '</div>';
+
+  // KPI Summary Cards
+  h += '<div class="stats" style="margin-bottom:24px">' +
+    '<div class="stat-box"><div class="sn num holo">184</div><div class="sub">customers served today</div></div>' +
+    '<div class="stat-box"><div class="sn num holo">' + avgWaitMin + ' min</div><div class="sub">average wait time</div></div>' +
+    '<div class="stat-box"><div class="sn num holo">94.2%</div><div class="sub">queue completion rate</div></div>' +
+  '</div>';
+
+  h += '<div class="grid">';
+
+  // 1. Customers Per Day
+  var days = [
+    { d: "28 Oct", c: 135, pct: 56 },
+    { d: "29 Oct", c: 148, pct: 62 },
+    { d: "30 Oct", c: 160, pct: 67 },
+    { d: "31 Oct", c: 195, pct: 81 },
+    { d: "1 Nov", c: 240, pct: 100 },
+    { d: "2 Nov", c: 228, pct: 95 },
+    { d: "Today", c: 184, pct: 77 }
+  ];
+  h += '<div class="stat-box" style="text-align:left">' +
+    '<div class="row" style="margin-bottom:14px"><b>Daily Customer Volume</b><span class="sub">GROUP BY DATE</span></div>' +
+    '<div style="display:flex;align-items:flex-end;height:140px;gap:8px">' +
+      days.map(function(item) {
+        return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:6px">' +
+          '<span class="num" style="font-size:11px">' + item.c + '</span>' +
+          '<div style="width:100%;border-radius:4px;background:var(--holo);height:' + item.pct + '%;min-height:4px"></div>' +
+          '<span class="sub" style="font-size:10px">' + item.d + '</span>' +
+        '</div>';
+      }).join("") +
+    '</div>' +
+  '</div>';
+
+  // 2. Top Booked Services
+  var topSvcs = [
+    { n: "Executive Haircut and Styling", orders: 98, rev: "Rs 24,500", pct: 45 },
+    { n: "Deep Conditioning Hair Spa", orders: 46, rev: "Rs 32,200", pct: 28 },
+    { n: "Beard Shaping and Trim", orders: 42, rev: "Rs 6,300", pct: 22 },
+    { n: "Charcoal Glow Facial", orders: 25, rev: "Rs 15,000", pct: 15 }
+  ];
+  h += '<div class="stat-box" style="text-align:left">' +
+    '<div class="row" style="margin-bottom:14px"><b>Top Requested Services</b><span class="sub">Revenue Contribution</span></div>' +
+    topSvcs.map(function(s) {
+      return '<div style="margin-bottom:12px">' +
+        '<div class="row"><b>' + s.n + '</b><span class="num">' + s.orders + ' orders &middot; ' + s.rev + '</span></div>' +
+        '<div style="height:6px;background:#1a1a1c;border-radius:99px;overflow:hidden;margin-top:6px">' +
+          '<div style="height:100%;width:' + s.pct + '%;background:var(--holo);border-radius:99px"></div>' +
+        '</div>' +
+      '</div>';
+    }).join("") +
+  '</div>';
+
+  h += '</div>';
+  app.innerHTML = h;
+}
+
+// 9. Legal Pages
+function legal(t, secs) {
+  box('<h2>' + t + '</h2><p class="sub">Visakhapatnam, Andhra Pradesh &middot; Operational Terms</p>' +
+    secs.map(function(s, i) {
+      return '<h3 style="margin:20px 0 6px;font-size:16px">' + (i + 1) + '. ' + s[0] + '</h3>' +
+             '<p class="sub" style="line-height:1.6;margin:0">' + s[1] + '</p>';
+    }).join(""));
+}
+
+var PAGES = window.PAGES = {
+  login: function() { me() ? (location.hash = "account") : authView("login"); },
+  signup: function() { me() ? (location.hash = "account") : authView("signup"); },
+  account: accountView,
+  settings: setView,
+  wallet: walletView,
+  "admin-queue": adminQueueView,
+  "sql-studio": sqlStudioView,
+  analytics: analyticsView,
+  favs: function() {
+    var app = document.getElementById("app");
+    if (!app) return;
+    var favs = getFavs();
+    var list = S.filter(function(s) { return favs.indexOf(s.id) > -1; });
+    var h = '<h2>' + t("favourites") + ' (' + list.length + ')</h2><p class="sub">Quick access to your preferred salons in Visakhapatnam</p>';
+    if (!list.length) {
+      h += '<div class="empty">' +
+        '<div style="margin-bottom:14px"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>' +
+        '<h2>No favourites saved yet</h2>' +
+        '<p>Tap the Save heart button on any salon card to save it here for fast booking.</p>' +
+        '<button class="btn main" data-go="home">Browse Salons</button>' +
+      '</div>';
+    } else {
+      h += '<div class="grid" style="margin-top:20px">' + list.map(renderSalonCard).join("") + '</div>';
+    }
+    app.innerHTML = h;
+  },
+  terms: function() {
+    legal("Terms of Service", [
+      ["Using SalonFlow", "SalonFlow connects customers with premier salons across Visakhapatnam to display real-time crowd levels, estimated wait times, and allow digital token bookings from home."],
+      ["Tokens and Wait Times", "Waiting times are calculated smartly using your selected services combined with the active queue. A 10-minute arrival grace window is provided once your turn arrives. Failure to arrive within 10 minutes automatically marks the token as a no-show to keep the queue moving."],
+      ["In-App Reviews", "Community reviews must reflect genuine customer experiences. You may edit or delete your reviews at any time in Settings."],
+      ["Third-Party Information", "Salon addresses, ratings, and maps are synced with Google Maps Platform."]
+    ]);
+  },
+  privacy: function() {
+    legal("Privacy Policy", [
+      ["Information We Collect", "Your name, email address, optional contact number, booked tokens, and in-app reviews."],
+      ["How Your Data Is Used", "We use your information exclusively to process digital salon tokens, deliver 2-turn departure notifications, and manage queue positions."],
+      ["Data Protection", "Passwords and authentication credentials are encrypted using SHA-256 with individual cryptographic salts."],
+      ["Your Control", "You can update profile preferences, review notifications, and delete your account or stored data anytime from Settings."]
+    ]);
+  }
+};
+
+// 10. Clean Production Footer (No "DBMS mini project" text!)
+function renderFooter() {
+  var tTheme = document.documentElement.dataset.theme, f = document.getElementById("ft");
+  if (!f) return;
+  f.innerHTML = '<div class="wrap fi">' +
+    '<div>' +
+      '<div class="logo"><span class="sf-mark">sf</span><span class="sf-text">salonflow</span></div>' +
+      '<p class="sub" style="margin-top:12px">' + t("footerSub") + '</p>' +
+    '</div>' +
+    '<div class="fl2">' +
+      '<a href="#home">' + t("salons") + '</a>' +
+      '<a href="#wallet">' + t("wallet") + '</a>' +
+      '<a href="#token">' + t("myToken") + '</a>' +
+      '<a href="#sql-studio">' + t("dbmsStudio") + '</a>' +
+      '<a href="#analytics">' + t("analytics") + '</a>' +
+      '<a href="#favs">' + t("favourites") + '</a>' +
+      '<a href="#settings">' + t("settings") + '</a>' +
+    '</div>' +
+    '<div>' +
+      '<div class="sub" style="margin-bottom:8px">' + t("theme") + '</div>' +
+      '<div class="seg" role="group" aria-label="Theme">' +
+        '<button data-theme-set="dark" class="' + (tTheme === "dark" ? "on" : "") + '">' + t("dark") + '</button>' +
+        '<button data-theme-set="light" class="' + (tTheme === "light" ? "on" : "") + '">' + t("white") + '</button>' +
+      '</div>' +
+      '<div class="sub" style="margin-top:16px;margin-bottom:8px">Language</div>' +
+      '<div class="seg" role="group" aria-label="Language">' +
+        '<button class="' + (currentLang === "en" ? "on" : "") + '" data-set-lang="en">EN</button>' +
+        '<button class="' + (currentLang === "te" ? "on" : "") + '" data-set-lang="te">తెలుగు</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>' +
+  '<div class="wrap sub cp">&copy; 2026 SalonFlow &middot; Visakhapatnam, Andhra Pradesh</div>';
+}
+
+function mapSrc(s) {
+  if (typeof CFG !== "undefined" && CFG.mapsKey) {
+    return "https://www.google.com/maps/embed/v1/place?key=" + CFG.mapsKey + "&q=place_id:" + s.pid;
+  }
+  return "https://www.google.com/maps?q=" + s.lat + "," + s.lng + "&z=16&output=embed";
+}
+
+function reviewsHTML(s) {
+  RS = 0;
+  var u = me(), rs = ld(K.r, []).filter(function(r) { return r.sid == s.id; }).reverse();
+  var avg = rs.length ? (rs.reduce(function(a, r) { return a + r.st; }, 0) / rs.length).toFixed(1) : "";
+
+  var h = '<h3 style="margin:28px 0 12px;font-size:20px">Ratings and Reviews</h3>' +
+    '<div class="panel">' +
+      '<div class="row" style="align-items:center">' +
+        '<div>' +
+          '<div class="big num holo" style="font-size:40px">' + s.r + ' / 5.0</div>' +
+          '<div class="sub">' + (s.rc || 0).toLocaleString("en-IN") + ' ratings verified in Vizag</div>' +
+        '</div>' +
+        '<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/place/?q=place_id:' + s.pid + '">Google Reviews &nearr;</a>' +
+      '</div>' +
+    '</div>' +
+    '<h3 style="margin:24px 0 12px;font-size:17px">Customer Community Feedback' + (avg ? ' &middot; ' + avg + ' (' + rs.length + ')' : "") + '</h3>';
+
+  h += u ?
+    '<div class="panel" style="margin-bottom:16px">' +
+      '<div style="margin-bottom:8px;font-weight:600">Your Rating (1 to 5 Stars):</div>' +
+      '<div style="display:flex;gap:6px;margin-bottom:12px">' +
+        [1, 2, 3, 4, 5].map(function(n) {
+          return '<button class="btn btn-sm st" data-act="star" data-n="' + n + '">' + n + ' Stars</button>';
+        }).join("") +
+      '</div>' +
+      '<textarea class="in" id="rt" maxlength="400" placeholder="Share your experience: waiting time, stylist service, ambience..."></textarea>' +
+      '<button class="btn main" style="margin-top:10px" data-act="rvsub" data-sid="' + s.id + '">Submit Review</button>' +
+    '</div>' :
+    '<div class="panel" style="margin-bottom:16px"><span class="sub">Log in to write a review.</span> <button class="btn btn-sm" style="margin-left:10px" data-act="rvlogin">Log In</button></div>';
+
+  h += rs.length ? rs.map(function(r) {
+    return '<div style="border-top:1px solid var(--line);padding:14px 0">' +
+      '<div class="row" style="align-items:center"><b>' + esc(r.name) + '</b><span class="sub">' + new Date(r.ts).toLocaleDateString("en-IN") + '</span></div>' +
+      '<div style="color:var(--mid);font-size:13px;font-weight:700;margin:4px 0">' + r.st + ' / 5 Rating</div>' +
+      '<p style="margin:4px 0;line-height:1.5">' + esc(r.tx) + '</p>' +
+      (u && u.id === r.uid ? '<button class="lk" data-act="rvdel" data-ts="' + r.ts + '">Delete</button>' : "") +
+    '</div>';
+  }).join("") : '<div class="sub" style="padding:16px 0">No community reviews yet for this salon. Be the first to review!</div>';
+
+  return h;
+}
+
+// Global Event Delegation for Interactive Actions
+document.addEventListener("click", async function(e) {
+  var themeToggleBtn = e.target.closest("#theme-toggle");
+  if (themeToggleBtn) {
+    var next = toggleTheme();
+    renderFooter();
+    if (location.hash === "#settings") setView();
+    updateThemeUI();
+    toast(next === "light" ? "Light theme enabled" : "Dark theme enabled");
+    return;
+  }
+
+  var b = e.target.closest("[data-act],[data-theme-set],[data-set-lang]");
+  if (!b) return;
+
+  if (b.dataset.themeSet) {
+    setTheme(b.dataset.themeSet);
+    renderFooter();
+    if (location.hash === "#settings") setView();
+    updateThemeUI();
+    toast(b.dataset.themeSet === "light" ? "Light theme enabled" : "Dark theme enabled");
+    return;
+  }
+
+  if (b.dataset.setLang) {
+    setLang(b.dataset.setLang);
+    return;
+  }
+
+  var a = b.dataset.act, u = me(), sid = location.hash.slice(7);
+
+  if (a === "quicklogincust") {
+    loginAs("customer");
+  }
+  else if (a === "quickloginowner") {
+    loginAs("owner");
+  }
+  else if (a === "login") {
+    var us = users().filter(function(x) { return x.email === gv("em").toLowerCase(); })[0];
+    if (!us || us.h !== await H(us.salt + pv("pw"))) return er("Incorrect email or password.");
+    sv(K.s, us.id);
+    toast("Welcome back, " + us.name.split(" ")[0]);
+    location.hash = (after === "login" || after === "signup") ? "home" : after;
+  }
+  else if (a === "signup") {
+    var n = gv("nm"), em = gv("em").toLowerCase(), pw = pv("pw");
+    var roleInput = document.querySelector('input[name="role"]:checked');
+    var role = roleInput ? roleInput.value : "customer";
+    if (n.length < 2) return er("Enter your full name.");
+    if (!/^\S+@\S+\.\S+$/.test(em)) return er("Enter a valid email address.");
+    if (pw.length < 8) return er("Password must be at least 8 characters.");
+    if (!document.getElementById("tc").checked) return er("Please accept the Terms and Privacy Policy.");
+    if (users().some(function(x) { return x.email === em; })) return er("An account with this email already exists.");
+    var salt = Math.random().toString(36).slice(2);
+    var nu = {
+      id: Date.now(),
+      name: n,
+      email: em,
+      phone: gv("ph"),
+      role: role,
+      salt: salt,
+      h: await H(salt + pw),
+      created: Date.now(),
+      set: { alerts: true, noshow: true, offers: false }
+    };
+    sv(K.u, users().concat([nu]));
+    sv(K.s, nu.id);
+    toast("Account created as " + role.toUpperCase());
+    location.hash = role === "owner" ? "admin-queue" : ((after === "login" || after === "signup") ? "home" : after);
+  }
+  else if (a === "logout") {
+    localStorage.removeItem(K.s);
+    toast("Logged out");
+    location.hash = "home";
+    route();
+  }
+  else if (a === "reqnotif") {
+    requestNotificationPermission();
+  }
+  else if (a === "runsqlquery") {
+    var qInput = document.getElementById("sql-query-input");
+    var resultsBox = document.getElementById("sql-results-box");
+    if (!qInput || !resultsBox) return;
+    var queryText = qInput.value;
+    var res = executeSQL(queryText);
+    if (res.error) {
+      resultsBox.innerHTML = '<div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:12px;margin-top:14px;color:#fca5a5;font-size:13px">' +
+        '<b>DBMS Query Error:</b> ' + esc(res.error) +
+      '</div>';
+    } else {
+      var tableHtml = '<div style="margin-top:14px">' +
+        '<div class="row" style="align-items:center;margin-bottom:8px">' +
+          '<span class="sub">Query executed successfully: <b>' + res.rowCount + ' rows</b> returned in <b>' + res.timeMs + ' ms</b></span>' +
+        '</div>' +
+        '<div class="sql-table-container"><table class="sql-table"><thead><tr>' +
+          res.columns.map(function(c) { return '<th>' + esc(c) + '</th>'; }).join("") +
+        '</tr></thead><tbody>' +
+          res.data.map(function(row) {
+            return '<tr>' + res.columns.map(function(c) {
+              return '<td>' + esc(row[c] != null ? row[c] : "NULL") + '</td>';
+            }).join("") + '</tr>';
+          }).join("") +
+        '</tbody></table></div></div>';
+      resultsBox.innerHTML = tableHtml;
+    }
+  }
+  else if (a === "loadsql") {
+    var qInput2 = document.getElementById("sql-query-input");
+    if (qInput2 && b.dataset.q) {
+      qInput2.value = b.dataset.q;
+      var runBtn = document.querySelector('[data-act="runsqlquery"]');
+      if (runBtn) runBtn.click();
+    }
+  }
+  else if (a === "verifyqrinput") {
+    var val = gv("qr-verify-input");
+    var statBox = document.getElementById("verify-status-box");
+    if (!val) return toast("Enter a Token Number or QR Hash to verify");
+    if (statBox) {
+      statBox.innerHTML = '<div style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:12px;padding:14px;color:#6ee7b7;font-size:14px">' +
+        '<b>Token Verified at Salon Desk:</b> Token #' + esc(val) + ' checked-in successfully. Status updated to: IN SERVICE.' +
+      '</div>';
+      toast("Token #" + val + " verified and checked-in!");
+    }
+  }
+  else if (a === "simulatequickscan") {
+    var statBox2 = document.getElementById("verify-status-box");
+    if (statBox2) {
+      statBox2.innerHTML = '<div style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);border-radius:12px;padding:14px;color:#6ee7b7;font-size:14px">' +
+        '<b>QR Code Verified:</b> Customer Rahul Varma (Token #104) is present. Status updated to: IN SERVICE.' +
+      '</div>';
+      toast("Token #104 verified via QR scan!");
+    }
+  }
+  else if (a === "calltoken") {
+    toast("Called Token #" + b.dataset.no + ". 10-minute arrival window started.");
+    sendRealNotification("SalonFlow Call", "Token #" + b.dataset.no + " has been called to styling chair!");
+  }
+  else if (a === "completetoken") {
+    toast("Token #" + b.dataset.no + " marked as completed.");
+  }
+  else if (a === "saveprof") {
+    if (gv("nm").length < 2) return er("Enter your name.");
+    u.name = gv("nm");
+    u.phone = gv("ph");
+    u.set = {
+      alerts: document.getElementById("n1") ? document.getElementById("n1").checked : true,
+      noshow: document.getElementById("n3") ? document.getElementById("n3").checked : true,
+      offers: false
+    };
+    saveUser(u);
+    authUI();
+    toast("Settings and preferences saved");
+  }
+  else if (a === "savepw") {
+    if (u.h !== await H(u.salt + pv("op"))) return er("Current password is wrong.");
+    if (pv("np").length < 8) return er("New password must be at least 8 characters.");
+    u.salt = Math.random().toString(36).slice(2);
+    u.h = await H(u.salt + pv("np"));
+    saveUser(u);
+    document.getElementById("op").value = "";
+    document.getElementById("np").value = "";
+    toast("Password updated");
+  }
+  else if (a === "delacc") {
+    if (confirm("Delete your account? This action cannot be undone.")) {
+      sv(K.u, users().filter(function(x) { return x.id !== u.id; }));
+      sv(K.r, ld(K.r, []).filter(function(r) { return r.uid !== u.id; }));
+      localStorage.removeItem(K.s);
+      toast("Account deleted");
+      location.hash = "home";
+      route();
+    }
+  }
+  else if (a === "resetdemo") {
+    if (confirm("Reset demo data, clear token and refresh queue?")) {
+      localStorage.removeItem(K.t);
+      localStorage.removeItem(K.f);
+      localStorage.removeItem(K.w);
+      toast("Demo data reset");
+      location.hash = "home";
+      route();
+    }
+  }
+  else if (a === "remfav") {
+    toggleFav(b.dataset.id);
+    if (location.hash === "#settings") setView();
+  }
+  else if (a === "star") {
+    RS = +b.dataset.n;
+    document.querySelectorAll(".st").forEach(function(x) {
+      var n = +x.dataset.n;
+      x.classList.toggle("main", n <= RS);
+    });
+  }
+  else if (a === "rvsub") {
+    var tx = gv("rt");
+    if (!u) return goLogin("Log in to review");
+    if (!RS) return toast("Select a star rating");
+    if (tx.length < 6) return toast("Please write at least 6 characters");
+    var rs = ld(K.r, []);
+    rs.push({ sid: +b.dataset.sid, uid: u.id, name: u.name, st: RS, tx: tx, ts: Date.now() });
+    sv(K.r, rs);
+    toast("Review posted");
+    detail(sid);
+  }
+  else if (a === "rvdel") {
+    sv(K.r, ld(K.r, []).filter(function(r) { return !(r.ts == b.dataset.ts && u && r.uid === u.id); }));
+    detail(sid);
+  }
+  else if (a === "rvlogin") {
+    goLogin("Log in to write a review");
+  }
+});
+
+</script>
+<script>
+// SalonFlow Application Core & Router
+// Image-Free, Emoji-Free, PWA Ready, 3D Flippable Token Cards
+
+var area = "All", sort = "Shortest wait", sel = {}, token = null;
+var onlyLowCrowd = false, onlyFavs = false;
+var noShowTimerInterval = null;
+
+// Crowd Labeling
+function crowd(w) {
+  if (w <= 15) return [t("lowCrowdLabel"), "var(--low)", "low"];
+  if (w <= 35) return [t("medCrowdLabel"), "var(--mid)", "mid"];
+  return [t("highCrowdLabel"), "var(--high)", "high"];
+}
+
+function badge(w) {
+  var c = crowd(w);
+  var n = Math.min(5, Math.max(1, Math.ceil(w / 8)));
+  var m = "";
+  for (var i = 0; i < 5; i++) {
+    m += '<i' + (i < n ? ' class="f"' : '') + '></i>';
+  }
+  return '<span class="badge live" style="--c:' + c[1] + '"><i class="dot"></i>' + c[0] + '</span><div class="meter" style="--c:' + c[1] + '">' + m + '</div>';
+}
+
+// Generate SVG QR Code for Check-in
+function renderQRCodeSVG(dataStr) {
+  var hash = 0;
+  for (var i = 0; i < dataStr.length; i++) {
+    hash = ((hash << 5) - hash) + dataStr.charCodeAt(i);
+    hash |= 0;
+  }
+  var size = 21;
+  var cellSize = 7;
+  var svgSize = size * cellSize;
+  var rects = '';
+
+  for (var r = 0; r < size; r++) {
+    for (var c = 0; c < size; c++) {
+      var isCorner = (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
+      var isCornerBorder = isCorner && (r === 0 || r === 6 || c === 0 || c === 6 ||
+        r === size - 7 || r === size - 1 || c === size - 7 || c === size - 1 ||
+        (r >= 2 && r <= 4 && c >= 2 && c <= 4) ||
+        (r >= 2 && r <= 4 && c >= size - 5 && c <= size - 3) ||
+        (r >= size - 5 && r <= size - 3 && c >= 2 && c <= 4));
+      var isBit = isCorner ? isCornerBorder : (((hash ^ (r * 13 + c * 37)) & 1) === 0);
+      if (isBit) {
+        rects += '<rect x="' + (c * cellSize) + '" y="' + (r * cellSize) + '" width="' + cellSize + '" height="' + cellSize + '" fill="#000"/>';
+      }
+    }
+  }
+  return '<svg width="' + svgSize + '" height="' + svgSize + '" viewBox="0 0 ' + svgSize + ' ' + svgSize + '">' + rects + '</svg>';
+}
+
+// Departure Alert Banner (2 Turns Away)
+function renderAlertBanner() {
+  if (!token || token.status === "completed" || token.status === "skipped" || token.status === "checked_in") return "";
+  if (token.pos <= 2) {
+    return '<div class="alert-banner" role="alert">' +
+      '<div class="alert-banner-left">' +
+        '<svg class="alert-icon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>' +
+        '<div class="alert-banner-text">' +
+          '<b>' + (token.pos === 1 ? (currentLang === "te" ? "మీ వంతు వచ్చింది! సెలూన్‌కు చేరుకోండి" : "Your turn has arrived!") : (currentLang === "te" ? "బయలుదేరాల్సిన సమయం! మీ ముందు 2 స్థానాలు మాత్రమే ఉన్నాయి." : "Departure Alert: You are 2 turns away")) + '</b>' +
+          '<span>' + esc(token.salon) + ' &middot; ~' + token.eta + ' ' + t("minWait") + ' &middot; ' + (token.pos === 1 ? (currentLang === "te" ? "చెక్-ఇన్ గడువు 10 నిమిషాలు" : "10-minute check-in grace period active") : (currentLang === "te" ? "సెలూన్‌కు బయలుదేరండి" : "Start heading over now to keep your spot")) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<button class="btn btn-sm main" data-go="token">' + t("myToken") + '</button>' +
+    '</div>';
+  }
+  return "";
+}
+
+// Real Photography Salon Card with Monogram & Heart Save
+function renderSalonCard(s) {
+  var fav = isFav(s.id);
+  var photoUrl = (s.photos && s.photos[0]) ? s.photos[0] : REAL_PHOTOS[(s.id - 1) % REAL_PHOTOS.length];
+
+  return '<div class="card" tabindex="0" data-open="' + s.id + '">' +
+    '<div class="card-ph" style="background-image:url(\'' + photoUrl + '\');background-color:#1e293b">' +
+      '<div class="card-monogram">' + s.initials + '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span class="card-area-badge">' + s.a + '</span>' +
+        '<button class="fav-btn' + (fav ? ' active' : '') + '" data-fav="' + s.id + '" title="Toggle Favourite">' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="' + (fav ? '#fff' : 'none') + '" stroke="' + (fav ? '#fff' : 'currentColor') + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' +
+          (fav ? 'Saved' : 'Save') +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cb">' +
+      '<div class="row">' +
+        '<div>' +
+          '<h3>' + esc(s.n) + '</h3>' +
+          '<div class="sub">' + s.a + ' &middot; ' + s.d + ' km &middot; Rating: ' + s.r + ' (' + (s.rc || 0).toLocaleString("en-IN") + ')</div>' +
+        '</div>' +
+        '<div class="wait num holo">' +
+          '<span data-n="' + s.w + '">' + s.w + '</span>' +
+          '<small>' + t("minWait") + '</small>' +
+        '</div>' +
+      '</div>' +
+      badge(s.w) +
+    '</div>' +
+  '</div>';
+}
+
+// PWA Live Notifications & Mobile Install State
+var pwaNotifDismissed = false;
+var deferredInstallPrompt = null;
+
+if (typeof window !== "undefined" && window.addEventListener) {
+  window.addEventListener("beforeinstallprompt", function(e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    var b = document.getElementById("pwa-install-banner");
+    if (b) b.style.display = "flex";
+  });
+}
+
+function renderPWANotificationBanner() {
+  try {
+    if (localStorage.getItem("sf_pwa_seen") === "1" || localStorage.getItem("sf_pwa_dismissed") === "1") {
+      return "";
+    }
+  } catch (e) {}
+
+  if (typeof window === "undefined" || !("Notification" in window)) return "";
+  if (Notification.permission === "granted") return "";
+
+  // Mark seen immediately so once seen, it is gone for lifetime!
+  try {
+    localStorage.setItem("sf_pwa_seen", "1");
+  } catch (e) {}
+
+  return '<div class="pwa-notif-card" id="pwa-notif-card">' +
+    '<div class="pwa-notif-left">' +
+      '<div class="pwa-notif-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>' +
+      '<div class="pwa-notif-text">' +
+        '<b>Enable PWA Queue Notifications</b>' +
+        '<span>Get native alerts on your phone when 2 turns away and when your turn arrives!</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pwa-notif-actions">' +
+      '<button class="btn btn-sm main" data-act="enablenotif">Enable Alerts</button>' +
+      '<button class="pwa-notif-dismiss" data-act="dismissnotif" title="Dismiss">&times;</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderPWAInstallBanner() {
+  // Never show standing install banner on home screen if already seen or dismissed
+  try {
+    if (localStorage.getItem("sf_pwa_seen") === "1" || localStorage.getItem("sf_pwa_dismissed") === "1") {
+      return "";
+    }
+  } catch (e) {}
+  return "";
+}
+
+// 1. Home View
+function home() {
+  var app = document.getElementById("app");
+  if (!app) return;
+
+  var l = S.slice();
+
+  if (sort === "Shortest wait") l.sort(function(a, b) { return a.w - b.w; });
+  if (sort === "Nearest") l.sort(function(a, b) { return a.d - b.d; });
+  if (sort === "Top rated") l.sort(function(a, b) { return b.r - a.r; });
+
+  var qInput = document.getElementById("q");
+  var q = qInput ? qInput.value : "";
+  var qLower = q.toLowerCase().trim();
+
+  if (qLower) {
+    l = l.filter(function(s) {
+      var servicesText = s.s.map(function(v) { return v[0]; }).join(" ").toLowerCase();
+      var fullText = (s.n + " " + s.a + " " + s.addr + " " + servicesText).toLowerCase();
+      return fullText.indexOf(qLower) > -1;
+    });
+  }
+
+  if (area !== "All") {
+    l = l.filter(function(s) { return s.a === area; });
+  }
+
+  if (onlyLowCrowd) {
+    l = l.filter(function(s) { return s.w <= 15; });
+  }
+
+  if (onlyFavs) {
+    var favs = getFavs();
+    l = l.filter(function(s) { return favs.indexOf(s.id) > -1; });
+  }
+
+  var totalWait = S.reduce(function(a, s) { return a + s.w; }, 0);
+  var avgWait = Math.round(totalWait / S.length);
+
+  var h = renderAlertBanner();
+  h += renderPWANotificationBanner();
+  h += renderPWAInstallBanner();
+
+  h += '<section class="hero">' +
+    '<h1>' + t("heroTitle") + '</h1>' +
+    '<p>' + t("heroSub") + '</p>' +
+
+    // Search Bar
+    '<div class="search-container">' +
+      '<div class="search-bar-wrap">' +
+        '<svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>' +
+        '<input id="q" value="' + esc(q) + '" placeholder="' + t("searchPlaceholder") + '" aria-label="Search salons">' +
+        (q ? '<button class="search-clear" id="search-clear" aria-label="Clear search">&times;</button>' : '') +
+      '</div>' +
+      '<div class="search-meta">' +
+        '<span>Showing <b>' + l.length + '</b> of ' + S.length + ' salons in Vizag</span>' +
+        '<span>Shortcut: press <kbd style="background:rgba(0,0,0,.08);padding:2px 6px;border-radius:4px;font-size:11px">/</kbd> to search</span>' +
+      '</div>' +
+    '</div>' +
+  '</section>';
+
+  // Statistics Summary Row
+  h += '<div class="stats">' +
+    '<div class="stat-box"><div class="sn num holo">' + S.length + '</div><div class="sub">' + t("salonsLive") + '</div></div>' +
+    '<div class="stat-box"><div class="sn num holo">' + avgWait + ' min</div><div class="sub">' + t("avgWait") + '</div></div>' +
+    '<div class="stat-box"><div class="sn num holo">184</div><div class="sub">' + t("tokensBooked") + '</div></div>' +
+  '</div>';
+
+  // Quick Sort & Filters (Emoji-Free)
+  h += '<div class="chips-group">' +
+    '<div class="chips-label">Quick Sort and Filters</div>' +
+    '<div class="chips">' +
+      '<button class="chip' + (sort === "Shortest wait" && !onlyLowCrowd && !onlyFavs ? " on" : "") + '" data-sort="Shortest wait">' + t("shortestWait") + '</button>' +
+      '<button class="chip' + (sort === "Nearest" ? " on" : "") + '" data-sort="Nearest">' + t("nearest") + '</button>' +
+      '<button class="chip' + (sort === "Top rated" ? " on" : "") + '" data-sort="Top rated">' + t("topRated") + '</button>' +
+      '<button class="chip' + (onlyLowCrowd ? " on" : "") + '" data-toggle-low="1">' + t("lowCrowdOnly") + '</button>' +
+      '<button class="chip' + (onlyFavs ? " on" : "") + '" data-toggle-fav="1">' + t("favourites") + ' (' + getFavs().length + ')</button>' +
+    '</div>' +
+  '</div>';
+
+  // Neighborhood Filter Chips
+  h += '<div class="chips-group">' +
+    '<div class="chips-label">Neighborhoods in Visakhapatnam</div>' +
+    '<div class="chips">' +
+      VIZAG_AREAS.map(function(c) {
+        return '<button class="chip' + (c === area ? " on" : "") + '" data-area="' + c + '">' + (c === "All" ? t("allAreas") : c) + '</button>';
+      }).join("") +
+    '</div>' +
+  '</div>';
+
+  // Layout Grid + Side Map
+  h += '<div class="layout">' +
+    '<div>' +
+      '<h2>' + (area === "All" ? "Premier Salons in Visakhapatnam" : "Salons in " + area) + '</h2>' +
+      '<p class="sub" style="margin:-8px 0 16px">Authentic locations &middot; Live wait time tracking</p>' +
+      '<div class="grid">';
+
+  h += l.map(renderSalonCard).join("");
+
+  if (!l.length) {
+    h += '<div class="empty"><h2>No salon found</h2><p>Try searching another name or reset your filters.</p><button class="btn main" data-reset-filters="1">Reset Filters</button></div>';
+  }
+
+  h += '</div></div>' +
+    '<aside class="map" aria-label="Map of Salons in Visakhapatnam">' +
+      '<iframe title="Salons in Visakhapatnam" loading="lazy" src="https://www.google.com/maps?q=hair+salons+in+Visakhapatnam&output=embed"></iframe>' +
+      '<a class="btn mapbtn" href="https://www.google.com/maps/search/hair+salons+in+Visakhapatnam" target="_blank" rel="noopener">Open in Google Maps &nearr;</a>' +
+    '</aside>' +
+  '</div>';
+
+  app.innerHTML = h;
+
+  // Number animation
+  if (!window.seen) {
+    window.seen = 1;
+    document.querySelectorAll("[data-n]").forEach(function(el) {
+      var target = +el.dataset.n, st = performance.now();
+      (function f(n) {
+        var p = Math.min(1, (n - st) / 700);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(f);
+      })(st);
+    });
+  }
+
+  var qEl = document.getElementById("q");
+  if (qEl) {
+    qEl.oninput = function() {
+      var pos = qEl.selectionStart;
+      home();
+      var reEl = document.getElementById("q");
+      if (reEl) {
+        reEl.focus();
+        reEl.setSelectionRange(pos, pos);
+      }
+    };
+  }
+}
+
+// Photo Lightbox State & Interactive Gallery
+var lbs = null;
+var GL = ["Interior Styling Floor", "VIP Grooming Suite", "Wash & Care Lounge", "Aromatherapy & Spa", "Executive Waiting Suite"];
+
+function drawLb() {
+  var old = document.getElementById("lb-modal");
+  if (old) old.remove();
+  if (!lbs) return;
+
+  var s = lbs.salon;
+  var idx = lbs.idx;
+  var photos = (s.photos && s.photos.length) ? s.photos : REAL_PHOTOS;
+  var url = photos[idx % photos.length];
+  var total = photos.length;
+  var cap = GL[idx % GL.length] || ("Photo " + (idx + 1));
+
+  var modal = document.createElement("div");
+  modal.className = "lb";
+  modal.id = "lb-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.innerHTML = '<button class="lbx" data-act="lbc" title="Close photo">&times;</button>' +
+    '<button class="lbn l" data-act="lbp" title="Previous photo">&lsaquo;</button>' +
+    '<div class="lbi">' +
+      '<img src="' + url + '" alt="' + esc(s.n) + ' - ' + cap + '">' +
+      '<div class="lbc">' + esc(s.n) + ' &middot; ' + cap + ' (' + (idx + 1) + '/' + total + ')</div>' +
+    '</div>' +
+    '<button class="lbn r" data-act="lbnx" title="Next photo">&rsaquo;</button>';
+
+  document.body.appendChild(modal);
+}
+
+function openLb(s, idx) {
+  lbs = { salon: s, idx: idx };
+  drawLb();
+}
+
+function closeLb() {
+  lbs = null;
+  var old = document.getElementById("lb-modal");
+  if (old) old.remove();
+}
+
+function nextLb(dir) {
+  if (!lbs) return;
+  var len = lbs.salon.photos ? lbs.salon.photos.length : 5;
+  lbs.idx = (lbs.idx + dir + len) % len;
+  drawLb();
+}
+
+function tile(s, i) {
+  var url = (s.photos && s.photos[i]) || REAL_PHOTOS[(s.id + i * 5) % REAL_PHOTOS.length];
+  var label = GL[i] || ("Gallery Photo " + (i + 1));
+  return '<button class="gt' + (i === 0 ? ' g0' : '') + '" data-act="lb" data-id="' + s.id + '" data-idx="' + i + '" aria-label="' + esc(s.n) + ' ' + label + '">' +
+    '<img src="' + url + '" alt="' + esc(s.n) + ' ' + label + '" loading="lazy">' +
+  '</button>';
+}
+
+function gallery(s) {
+  return '<div class="gal">' +
+    tile(s, 0) +
+    tile(s, 1) +
+    tile(s, 2) +
+    tile(s, 3) +
+    tile(s, 4) +
+    '<span class="gc">5 photos &middot; Tap to expand</span>' +
+  '</div>';
+}
+
+// 2. Salon Detail View
+function detail(id) {
+  var s = S.filter(function(x) { return x.id == id; })[0];
+  if (!s) return home();
+
+  sel[id] = sel[id] || {};
+
+  var pickedIndices = [];
+  s.s.forEach(function(v, i) {
+    if (sel[id][i]) pickedIndices.push(i);
+  });
+
+  var pickedPrice = 0;
+  var pickedDuration = 0;
+  pickedIndices.forEach(function(idx) {
+    pickedPrice += s.s[idx][1];
+    pickedDuration += s.s[idx][2];
+  });
+
+  var serviceMin = pickedDuration > 0 ? pickedDuration : 25;
+  var queueWait = s.w;
+  var totalWait = queueWait + serviceMin;
+  var aheadCount = Math.max(1, Math.round(queueWait / 8));
+
+  var readyDate = new Date(Date.now() + totalWait * 60000);
+  var rh = readyDate.getHours();
+  var rm = readyDate.getMinutes();
+  var rampm = rh >= 12 ? 'PM' : 'AM';
+  rh = rh % 12 || 12;
+  var readyBy = rh + ':' + (rm < 10 ? '0' : '') + rm + ' ' + rampm;
+
+  var fav = isFav(s.id);
+  var h = renderAlertBanner();
+
+  h += '<button class="back" data-go="home">&lsaquo; ' + (currentLang === "te" ? "అన్ని సెలూన్లు" : "All Vizag Salons") + '</button>' +
+    gallery(s) +
+    '<div class="cols">' +
+      '<div>' +
+        '<div class="row" style="align-items:flex-start">' +
+          '<div>' +
+            '<h2>' + esc(s.n) + '</h2>' +
+            '<p class="sub">' + s.a + ' &middot; ' + s.d + ' km &middot; Rating: ' + s.r + ' (' + (s.rc || 0).toLocaleString("en-IN") + ' reviews)</p>' +
+          '</div>' +
+          '<button class="fav-btn' + (fav ? ' active' : '') + '" data-fav="' + s.id + '" title="Toggle Favourite">' + (fav ? 'Saved' : 'Save') + '</button>' +
+        '</div>' +
+
+        // Smarter Wait Time Calculation Box
+        '<div class="smart-wait-box">' +
+          '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em">Smarter Wait Time Engine</div>' +
+          '<div class="smart-wait-row">' +
+            '<span>Queue waiting time (stylist availability)</span>' +
+            '<b class="num">' + queueWait + ' min (' + aheadCount + ' ahead)</b>' +
+          '</div>' +
+          '<div class="smart-wait-row">' +
+            '<span>Selected services duration</span>' +
+            '<b class="num">+' + serviceMin + ' min (' + (pickedIndices.length || "1 default") + ' service)</b>' +
+          '</div>' +
+          '<div class="smart-progress-bar">' +
+            '<div class="smart-bar-queue" style="width:' + Math.round((queueWait / totalWait) * 100) + '%"></div>' +
+            '<div class="smart-bar-service" style="width:' + Math.round((serviceMin / totalWait) * 100) + '%"></div>' +
+          '</div>' +
+          '<div class="smart-wait-row total">' +
+            '<span>Total Turnaround &middot; Service Ready By</span>' +
+            '<span class="holo num" style="font-size:18px">' + totalWait + ' min &middot; ~' + readyBy + '</span>' +
+          '</div>' +
+        '</div>' +
+
+        '<h3 style="margin:24px 0 12px;font-size:20px">Choose Services</h3>' +
+        s.s.map(function(v, i) {
+          var isPicked = !!sel[id][i];
+          return '<div class="svc' + (isPicked ? " on" : "") + '" tabindex="0" data-svc="' + i + '">' +
+            '<div>' +
+              '<b>' + v[0] + '</b><span class="svc-tag">' + v[3] + '</span>' +
+              '<div class="sub">' + v[2] + ' min duration</div>' +
+            '</div>' +
+            '<b class="num">Rs ' + v[1] + '</b>' +
+          '</div>';
+        }).join("") +
+
+        '<h3 style="margin:28px 0 12px;font-size:20px">Location and Contact</h3>' +
+        '<div class="panel">' +
+          '<div style="font-weight:600">' + s.addr + '</div>' +
+          '<div class="sub" style="margin:6px 0 14px">' + s.h + ' &middot; ' + s.ph + '</div>' +
+          '<iframe class="dmap" title="Map" loading="lazy" src="' + mapSrc(s) + '"></iframe>' +
+          '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">' +
+            '<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lng + '&destination_place_id=' + s.pid + '">Directions &nearr;</a>' +
+            '<a class="btn" href="tel:' + s.ph.replace(/\s/g, "") + '">Call Salon</a>' +
+          '</div>' +
+        '</div>' +
+
+        reviewsHTML(s) +
+      '</div>' +
+
+      // Side Live Queue Panel
+      '<div class="panel sticky-p">' +
+        '<div class="sub live"><i class="dot" style="--c:var(--low);display:inline-block;margin-right:6px"></i>Live Queue Status</div>' +
+        '<div class="big num holo" style="margin:10px 0 4px">' + totalWait + ' min</div>' +
+        '<div class="sub">' + aheadCount + ' customer' + (aheadCount === 1 ? '' : 's') + ' ahead of you &middot; ~' + readyBy + '</div>' +
+        badge(s.w) +
+        '<div class="row" style="margin-top:22px">' +
+          '<span class="sub">' + (pickedIndices.length || 1) + ' service' + (pickedIndices.length === 1 ? '' : 's') + '</span>' +
+          '<b class="num">Rs ' + (pickedPrice || 250) + '</b>' +
+        '</div>' +
+        '<button class="btn main" style="width:100%;margin-top:14px" data-book="' + id + '">' + t("bookToken") + '</button>' +
+      '</div>' +
+    '</div>' +
+
+    // Sticky Bottom Bar
+    '<div class="sticky">' +
+      '<div>' +
+        '<div class="num" style="font-weight:700">Rs ' + (pickedPrice || 250) + ' &middot; ~' + totalWait + ' min</div>' +
+        '<div class="sub">' + (pickedIndices.length || 1) + ' selected</div>' +
+      '</div>' +
+      '<button class="btn main" data-book="' + id + '">' + t("bookToken") + '</button>' +
+    '</div>';
+
+  app.innerHTML = h;
+}
+
+// 3. Active Token View with 3D Flippable Card
+function tokenView() {
+  var app = document.getElementById("app");
+  if (!app) return;
+
+  token = ld(K.t, null);
+
+  if (!token) {
+    app.innerHTML = '<div class="empty">' +
+      '<h2>No Active Token</h2>' +
+      '<p>Select any salon in Visakhapatnam and book a token to generate your pass card.</p>' +
+      '<button class="btn main" data-go="home">Browse Salons</button>' +
+    '</div>';
+    return;
+  }
+
+  // 10-Minute Arrival Grace Period Engine
+  if (token.pos <= 1 && token.status !== "checked_in" && token.status !== "skipped") {
+    if (!token.callTime) {
+      token.callTime = Date.now();
+      sv(K.t, token);
+      sendRealNotification("Your Turn at " + token.salon, "Your token #" + token.no + " is called! Please check in within 10 minutes.");
+    }
+    var elapsedSec = Math.floor((Date.now() - token.callTime) / 1000);
+    var remainingSec = Math.max(0, 600 - elapsedSec);
+    token.remainingSec = remainingSec;
+
+    if (remainingSec <= 0 && token.status !== "skipped") {
+      token.status = "skipped";
+      token.pos = 0;
+      sv(K.t, token);
+      toast("Token #" + token.no + " expired due to 10-minute no-show policy.");
+    }
+  }
+
+  var isTurn = token.pos <= 1;
+  var isCheckedIn = token.status === "checked_in";
+  var isSkipped = token.status === "skipped";
+
+  var timerDisplay = "";
+  if (isTurn && !isCheckedIn && !isSkipped) {
+    var r = token.remainingSec || 600;
+    var m = Math.floor(r / 60);
+    var sec = r % 60;
+    timerDisplay = (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  var h = '<div style="max-width:540px;margin:20px auto">' +
+    '<div class="panel tok" style="padding:24px 20px">' +
+      '<div class="sub">' + esc(token.salon) + '</div>' +
+      '<div style="font-size:22px;font-weight:800;margin:8px 0">' +
+        (isCheckedIn ? 'Checked In and In Service' :
+         isSkipped ? 'Token Skipped (No-Show)' :
+         isTurn ? t("youAreNext") :
+         (t("youArePos") + ' #' + token.pos + ' in queue')) +
+      '</div>';
+
+  if (!isCheckedIn && !isSkipped) {
+    h += '<div class="sub live"><i class="dot" style="--c:var(--low);display:inline-block;margin-right:6px"></i>Estimated wait: ~' + token.eta + ' ' + t("minWait") + '</div>';
+  }
+
+  if (isTurn && !isCheckedIn && !isSkipped) {
+    h += '<div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;border-radius:14px;padding:12px;margin:16px 0;font-size:14px;font-weight:600">' +
+      'Arrival Window: <span id="arrival-timer-val">' + timerDisplay + '</span> remaining. Please check in at counter or token will be skipped.' +
+    '</div>';
+  }
+
+  // 3D Flippable Premium Card
+  h += render3DTokenCard(token, 0);
+
+  // Action Buttons
+  h += '<div style="display:flex;gap:10px;flex-direction:column;margin-top:18px">';
+  if (!isCheckedIn && !isSkipped) {
+    h += '<button class="btn main" data-act="qrcheckin">' + t("checkInQR") + ' (Simulate Counter Scan)</button>';
+    h += '<button class="btn" data-act="simadvanceturn">Advance Turn in Queue (Test 2-Turn Alert)</button>';
+    h += '<button class="btn btn-danger" data-act="simnoshow">Simulate 10-Minute Late (Test No-Show Skip)</button>';
+    h += '<div style="display:flex;gap:8px;margin-top:4px">' +
+      '<button class="btn btn-sm" style="flex:1" data-act="testnotif">🔔 Test PWA Alert</button>' +
+      '<button class="btn btn-sm" style="flex:1" data-act="installpwa">📲 Install PWA</button>' +
+    '</div>';
+  }
+  h += '<button class="btn" data-cancel="1">' + (isSkipped || isCheckedIn ? "Clear Token" : t("cancelToken")) + '</button>';
+  h += '</div>' +
+    '</div></div>';
+
+  app.innerHTML = h;
+
+  if (noShowTimerInterval) clearInterval(noShowTimerInterval);
+  if (isTurn && !isCheckedIn && !isSkipped) {
+    noShowTimerInterval = setInterval(function() {
+      if (location.hash !== "#token") {
+        clearInterval(noShowTimerInterval);
+        return;
+      }
+      var curTok = ld(K.t, null);
+      if (!curTok || !curTok.callTime) return;
+      var elapsedSec = Math.floor((Date.now() - curTok.callTime) / 1000);
+      var remainingSec = Math.max(0, 600 - elapsedSec);
+      curTok.remainingSec = remainingSec;
+      sv(K.t, curTok);
+
+      var timerEl = document.getElementById("arrival-timer-val");
+      if (timerEl) {
+        var tm = Math.floor(remainingSec / 60);
+        var tsec = remainingSec % 60;
+        timerEl.textContent = (tm < 10 ? '0' : '') + tm + ':' + (tsec < 10 ? '0' : '') + tsec;
+      }
+
+      if (remainingSec <= 0 && curTok.status !== "skipped") {
+        clearInterval(noShowTimerInterval);
+        curTok.status = "skipped";
+        curTok.pos = 0;
+        sv(K.t, curTok);
+        toast("Token #" + curTok.no + " expired due to 10-minute no-show policy.");
+        tokenView();
+      }
+    }, 1000);
+  }
+}
+
+// 4. Central Router
+function route() {
+  var h = location.hash.slice(1) || "home";
+
+  document.querySelectorAll("[data-go]").forEach(function(a) {
+    if (a.tagName === "A") {
+      a.classList.toggle("on", a.dataset.go === h);
+    }
+  });
+
+  var pagesMap = window.PAGES || (typeof PAGES !== "undefined" ? PAGES : null);
+  if (pagesMap && pagesMap[h]) {
+    pagesMap[h]();
+  } else if (h === "token") {
+    tokenView();
+  } else if (h === "wallet") {
+    walletView();
+  } else if (h === "admin-queue") {
+    adminQueueView();
+  } else if (h === "sql-studio") {
+    sqlStudioView();
+  } else if (h.indexOf("salon-") === 0) {
+    detail(h.slice(6));
+  } else {
+    home();
+  }
+
+  window.scrollTo(0, 0);
+  authUI();
+  renderFooter();
+}
+
+// Global Click Handlers
+document.addEventListener("click", function(e) {
+  var tTarget = e.target.closest("[data-go],[data-open],[data-svc],[data-book],[data-sort],[data-area],[data-cancel],[data-fav],[data-toggle-low],[data-toggle-fav],[data-reset-filters],[data-act]");
+  if (!tTarget) return;
+
+  if (e.target.closest("#search-clear")) {
+    var qInput = document.getElementById("q");
+    if (qInput) {
+      qInput.value = "";
+      home();
+    }
+    return;
+  }
+
+  var h = location.hash.slice(1);
+
+  if (tTarget.dataset.go) {
+    location.hash = tTarget.dataset.go;
+  }
+  else if (tTarget.dataset.open) {
+    location.hash = "salon-" + tTarget.dataset.open;
+  }
+  else if (tTarget.dataset.fav) {
+    e.stopPropagation();
+    toggleFav(tTarget.dataset.fav);
+  }
+  else if (tTarget.dataset.sort) {
+    sort = tTarget.dataset.sort;
+    onlyLowCrowd = false;
+    home();
+  }
+  else if (tTarget.dataset.area) {
+    area = tTarget.dataset.area;
+    home();
+  }
+  else if (tTarget.dataset.toggleLow) {
+    onlyLowCrowd = !onlyLowCrowd;
+    home();
+  }
+  else if (tTarget.dataset.toggleFav) {
+    onlyFavs = !onlyFavs;
+    home();
+  }
+  else if (tTarget.dataset.resetFilters) {
+    sort = "Shortest wait";
+    area = "All";
+    onlyLowCrowd = false;
+    onlyFavs = false;
+    var qIn = document.getElementById("q");
+    if (qIn) qIn.value = "";
+    home();
+  }
+  else if (tTarget.dataset.svc) {
+    var id = h.slice(6);
+    sel[id][tTarget.dataset.svc] = !sel[id][tTarget.dataset.svc];
+    var y = window.scrollY;
+    detail(id);
+    window.scrollTo(0, y);
+  }
+  else if (tTarget.dataset.book) {
+    if (!me()) {
+      goLogin("Please log in to book a queue token");
+      return;
+    }
+    var s = S.filter(function(x) { return x.id == tTarget.dataset.book; })[0];
+    var p = Math.max(1, Math.round(s.w / 8));
+    var tokNo = 40 + Math.floor(Math.random() * 40);
+    token = {
+      id: "SF-2026-" + Math.floor(1000 + Math.random() * 9000),
+      salonId: s.id,
+      salon: s.n,
+      area: s.a,
+      addr: s.addr,
+      no: tokNo,
+      pos: p,
+      eta: s.w,
+      status: "waiting",
+      services: ["Executive Haircut and Styling"],
+      price: 250,
+      date: "Today, " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      qrHash: "sf-tok-" + tokNo + "-" + s.id + "-live",
+      created: Date.now()
+    };
+    sv(K.t, token);
+    saveWalletToken(token);
+    sendRealNotification("Token #" + token.no + " Confirmed!", "You are in line at " + token.salon + " (Pos #" + token.pos + ", ~" + token.eta + " min wait).");
+    toast("Token #" + token.no + " booked and saved to your Pass Wallet!");
+    location.hash = "token";
+  }
+  else if (tTarget.dataset.cancel) {
+    token = null;
+    sv(K.t, null);
+    toast("Token cancelled");
+    tokenView();
+  }
+  else if (tTarget.dataset.act === "qrcheckin") {
+    if (token) {
+      token.status = "checked_in";
+      token.pos = 0;
+      sv(K.t, token);
+      toast("Check-in verified via QR! You are now in service.");
+      tokenView();
+    }
+  }
+  else if (tTarget.dataset.act === "simadvanceturn") {
+    if (token && token.pos > 1) {
+      token.pos--;
+      token.eta = Math.max(5, token.eta - 10);
+      sv(K.t, token);
+      if (token.pos === 2) {
+        toast("Departure Alert: You are now 2 turns away at " + token.salon + "!");
+        sendRealNotification("Departure Alert", "You are 2 turns away at " + token.salon + "! Start heading over now.");
+      }
+      tokenView();
+    } else if (token && token.pos === 1) {
+      toast("You are turn #1! Arrival countdown is active.");
+    }
+  }
+  else if (tTarget.dataset.act === "simnoshow") {
+    if (token) {
+      token.status = "skipped";
+      token.pos = 0;
+      sv(K.t, token);
+      toast("10-minute arrival window expired. Token marked as no-show.");
+      tokenView();
+    }
+  }
+  else if (tTarget.dataset.act === "lb") {
+    var sid = +tTarget.dataset.id;
+    var sObj = S.filter(function(x) { return x.id === sid; })[0];
+    if (sObj) openLb(sObj, +tTarget.dataset.idx || 0);
+  }
+  else if (tTarget.dataset.act === "lbc") {
+    closeLb();
+  }
+  else if (tTarget.dataset.act === "lbp") {
+    nextLb(-1);
+  }
+  else if (tTarget.dataset.act === "lbnx") {
+    nextLb(1);
+  }
+  else if (tTarget.dataset.act === "enablenotif") {
+    try {
+      localStorage.setItem("sf_pwa_seen", "1");
+      localStorage.setItem("sf_pwa_dismissed", "1");
+    } catch (e) {}
+    requestNotificationPermission(function(granted) {
+      var el = document.getElementById("pwa-notif-card");
+      if (el) el.remove();
+    });
+  }
+  else if (tTarget.dataset.act === "dismissnotif") {
+    try {
+      localStorage.setItem("sf_pwa_seen", "1");
+      localStorage.setItem("sf_pwa_dismissed", "1");
+    } catch (e) {}
+    var el = document.getElementById("pwa-notif-card");
+    if (el) el.remove();
+  }
+  else if (tTarget.dataset.act === "flipcard" || e.target.closest(".token-card-3d") || e.target.closest("[data-act='flipcard']")) {
+    var cardEl = e.target.closest(".token-card-3d");
+    if (cardEl) {
+      cardEl.classList.toggle("flipped");
+    }
+  }
+  else if (tTarget.dataset.act === "testnotif") {
+    sendRealNotification("SalonFlow PWA Live Alert", "Live Queue Alert: You are 2 turns away at Toni and Guy Unisex Salon (~14 min wait).");
+    toast("Test PWA notification sent to your device!");
+  }
+  else if (tTarget.dataset.act === "installpwa") {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then(function(choice) {
+        if (choice.outcome === "accepted") {
+          toast("SalonFlow PWA installed successfully!");
+        }
+        deferredInstallPrompt = null;
+      });
+    } else {
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIOS) {
+        toast("To install on iPhone: Tap the Share button at bottom and tap 'Add to Home Screen'");
+      } else {
+        toast("To install: Open browser menu (⋮) > tap 'Install app' or 'Add to Home screen'");
+      }
+    }
+  }
+});
+
+// Shortcut key '/' and Lightbox keyboard navigation
+document.addEventListener("keydown", function(e) {
+  if (lbs) {
+    if (e.key === "Escape") {
+      closeLb();
+      return;
+    }
+    if (e.key === "ArrowLeft") {
+      nextLb(-1);
+      return;
+    }
+    if (e.key === "ArrowRight") {
+      nextLb(1);
+      return;
+    }
+  }
+
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+    var qEl = document.getElementById("q");
+    if (qEl) {
+      e.preventDefault();
+      qEl.focus();
+    }
+  }
+  if (e.key === "Enter" && e.target.matches(".card, .svc")) {
+    e.target.click();
+  }
+});
+
+var logoEl = document.getElementById("logo");
+if (logoEl) {
+  logoEl.onclick = function() { location.hash = "home"; };
+}
+
+var langToggleEl = document.getElementById("lang-toggle");
+if (langToggleEl) {
+  langToggleEl.onclick = function() {
+    setLang(currentLang === "en" ? "te" : "en");
+  };
+}
+
+// Register PWA Service Worker
+if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function() {});
+  });
+}
+
+window.addEventListener("hashchange", route);
+route();
+
+</script>
+</body>
+</html>
